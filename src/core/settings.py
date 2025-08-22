@@ -232,11 +232,19 @@ BORGHIVE = {
 # NOTIFICATION SETTINGS
 #
 EMAIL_HOST = env('EMAIL_HOST', 'localhost')
-EMAIL_PORT = env('EMAIL_PORT', '465')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER', 'root')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', 'password')
-EMAIL_USE_SSL = True  # disallow unsecure communication!
+EMAIL_PORT = env('EMAIL_PORT', '25')  # Changed default for local servers
+EMAIL_HOST_USER = env('EMAIL_HOST_USER', '')  # Empty by default
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD', '')  # Empty by default
+EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', False)  # Disabled by default for local
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)  # Also disable TLS for local
 EMAIL_FROM = env('EMAIL_FROM', 'borghive@{}'.format(socket.getfqdn()))
+
+# Handle unauthenticated local email servers
+if not EMAIL_HOST_USER:
+    EMAIL_HOST_USER = None
+if not EMAIL_HOST_PASSWORD:
+    EMAIL_HOST_PASSWORD = None
+
 if DEBUG:
     EMAIL_BACKEND = env('EMAIL_BACKEND', 'django.core.mail.backends.dummy.EmailBackend')
 
