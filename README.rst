@@ -1,7 +1,8 @@
 What is Borg Hive?
 ------------------
 
-Borg Hive is a management interface for borgbackup repositories.
+Borg Hive is a management interface for borgbackup repositories. It was initially created by bpereto, who stopped to maintain it at some point.
+As I still use it on a daily base, I to continue his valuable work.
 
 The main goal of Borg Hive is to provide a easy management of borg repositories and ssh keys, also provide notifications if there is a stale backup. Optionally, it collects some events and statistics what's happening.
 

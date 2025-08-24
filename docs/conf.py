@@ -18,8 +18,8 @@
 # -- Project information -----------------------------------------------------
 
 project = 'Borg Hive'
-copyright = '2020, bpereto'
-author = 'bpereto'
+copyright = '2020, bpereto, 2025 maltejk'
+author = 'bpereto, maltejk'
 
 
 # -- General configuration ---------------------------------------------------
