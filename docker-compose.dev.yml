@@ -111,7 +111,7 @@ services:
       - ldap-backup:/data/backup
 
   redis:
-    image: redis:latest
+    image: redis:6.2.19-bookworm
 
 volumes:
   mariadb-data:
