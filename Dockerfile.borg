@@ -1,6 +1,7 @@
 FROM python:3.10-slim-bookworm
 
 LABEL org.opencontainers.image.authors="malte@maltejk.de"
+LABEL org.opencontainers.image.source="https://github.com/maltejk/borg-hive"
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTE=1
