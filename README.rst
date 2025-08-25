@@ -1,15 +1,21 @@
 What is Borg Hive?
 ------------------
 
-Borg Hive is a management interface for borgbackup repositories. It was initially created by bpereto, who stopped to maintain it at some point.
+Borg Hive is a management interface for borgbackup repositories. 
+
+It was initially created by bpereto, who stopped to maintain it at some point.
 As I still use it on a daily base, I to continue his valuable work.
 
-The main goal of Borg Hive is to provide a easy management of borg repositories and ssh keys, also provide notifications if there is a stale backup. Optionally, it collects some events and statistics what's happening.
+Quoting the original README below:
 
-I backup my peripherals at home with borgbackup, which works nice on my servers, android phones, laptops, workstations and so on.
-To keep the overview over my backups and which device haven't done one in a while I decided to write a dashboard for it. The focus is for backups at home, but Borghive should also work in the cloud or in an enterprise.
+.. epigraph::
 
-.. warning:: **This is under active development. It's Alpha!**
+        The main goal of Borg Hive is to provide a easy management of borg repositories and ssh keys, also provide notifications if there is a stale backup. Optionally, it collects some events and statistics what's happening.
+
+        I backup my peripherals at home with borgbackup, which works nice on my servers, android phones, laptops, workstations and so on.
+        To keep the overview over my backups and which device haven't done one in a while I decided to write a dashboard for it. The focus is for backups at home, but Borghive should also work in the cloud or in an enterprise.
+
+.. warning:: **This is alpha software!**
 
 Features
 --------
