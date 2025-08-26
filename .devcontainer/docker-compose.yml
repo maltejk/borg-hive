@@ -1,0 +1,30 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - .:/workspaces/borg-hive:cached
+      - ./src:/app:ro
+      - .devcontainer/.data/borg-config:/config:ro
+      - ./src/static:/staticfiles:ro
+      - .devcontainer/.data/borg-repos:/repos:ro
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+  borg:
+    build:
+      context: .
+      dockerfile: Dockerfile.borg
+    volumes:
+      - .devcontainer/.data/borg-repos:/repos
+      - .devcontainer/.data/borg-config:/config
+      - ./src:/app:ro
+  db:
+    volumes:
+      - .devcontainer/.data/mysql:/var/lib/mysql
+  ldap:
+    volumes:
+      - .devcontainer/.data/ldap-data:/var/lib/ldap
+      - .devcontainer/.data/ldap-config:/etc/ldap/slapd.d
+      - .devcontainer/.data/ldap-backup:/data/backup
