@@ -1,5 +1,7 @@
 {
 	"name": "",
+	//"dockerFile": "Dockerfile",
+	//"context": "..",
 	"dockerComposeFile": [
 		"../docker-compose.dev.yml",
 		"docker-compose.yml"
