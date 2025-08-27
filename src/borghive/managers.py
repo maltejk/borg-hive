@@ -7,7 +7,7 @@ class OwnerOrGroupManager(models.Manager):
     model manager for filtering by owner or group
     """
 
-    # pylint: disable=R0903
+    # pylint: disable=too-few-public-methods
 
     def by_owner_or_group(self, user):
         """

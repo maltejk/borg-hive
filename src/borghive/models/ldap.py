@@ -9,7 +9,7 @@ class RepositoryLdapUser(ldapdb.models.Model):
     Class for representing a repository user in LDAP
     """
 
-    # pylint: disable=W0222
+    # pylint: disable=signature-differs
 
     # LDAP meta-data
     base_dn = settings.BORGHIVE['LDAP_USER_BASEDN']

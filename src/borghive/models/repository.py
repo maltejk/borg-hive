@@ -35,7 +35,7 @@ class RepositoryLocation(BaseModel):
     name = models.CharField(max_length=255, unique=True)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
 
 
 class RepositoryUser(BaseModel):
@@ -44,7 +44,7 @@ class RepositoryUser(BaseModel):
 
     represents a uniq user related to one repository
     """
-    # pylint: disable=R0201,W0222
+    # pylint: disable=no-self-use,signature-differs,no-member
 
     MIN_UID = 1111
     MAX_UID = 99999
@@ -85,7 +85,7 @@ class RepositoryUser(BaseModel):
             uid = self.MIN_UID
         if self.MIN_UID <= uid <= self.MAX_UID:
             return uid
-        raise Exception(f'{uid} no uid found betweeen MIN_UID {self.MIN_UID} and MAX_UID {self.MAX_UID}')
+        raise ValueError(f'{uid} no uid found betweeen MIN_UID {self.MIN_UID} and MAX_UID {self.MAX_UID}')
 
     def sync_to_ldap(self):
         """django prevents cross db relations - sync to ldap backend"""
@@ -103,7 +103,7 @@ class RepositoryMode:
     desribes the repository mode
     """
 
-    # pylint: disable=R0903
+    # pylint: disable=too-few-public-methods
 
     BORG = 'BORG'
     IMPORT = 'IMPORT'
@@ -176,7 +176,7 @@ class Repository(BaseModel):
         '''
         if self.is_created():
             config = os.path.join(self.get_repo_path(), 'config')
-            with open(config, 'r') as f:  # pylint: disable=W1514
+            with open(config, 'r') as f:  # pylint: disable=unspecified-encoding
                 return 'key =' in f.read()
         return False
 
@@ -200,7 +200,7 @@ class Repository(BaseModel):
             index_file = glob.glob(os.path.join(
                 self.get_repo_path(), 'index.*'))
             if len(index_file) != 1:
-                raise Exception('Too many index files found')
+                raise ValueError('Too many index files found')
             last_updated = os.path.getmtime(index_file[0])
             return make_aware(datetime.datetime.fromtimestamp(last_updated))
         return None
@@ -218,7 +218,7 @@ class Repository(BaseModel):
 
     def get_last_repository_statistic(self):
         """get last saved repository statistic for this repo"""
-        return self.repositorystatistic_set.last()
+        return self.repositorystatistic_set.last() # pylint: disable=no-member
 
     def refresh(self):
         '''
@@ -306,11 +306,11 @@ class Repository(BaseModel):
         alert.save()
 
         borghive.tasks.alert.fire_alert.delay(
-            repo_id=self.id, alert_id=alert.id)
+            repo_id=self.id, alert_id=alert.id) # pylint: disable=no-member
 
         return True
 
-    class Meta:
+    class Meta: # pylint: disable=too-few-public-methods
         verbose_name_plural = 'Repositories'
 
         # user and reponame should be unique

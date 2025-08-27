@@ -5,7 +5,7 @@ import sys
 import inotify.adapters
 from inotify.calls import InotifyError
 from django import db
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
 # used for singal activation
@@ -45,7 +45,7 @@ class Command(BaseCommand):
         '''
 
         if not os.path.isdir(options['repo_path']):
-            raise Exception(f'Repo path: {options["repo_path"]} not found')
+            raise CommandError(f'Repo path: {options["repo_path"]} not found')
 
         i = inotify.adapters.InotifyTree(options['repo_path'])
 

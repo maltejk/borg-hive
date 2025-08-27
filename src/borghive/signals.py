@@ -1,18 +1,19 @@
 import logging
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 import borghive.tasks
-from borghive.models import Repository, RepositoryEvent, RepositoryUser, RepositoryLdapUser, AlertPreference
+from borghive.models import (
+    AlertPreference, Repository, RepositoryEvent, RepositoryUser, RepositoryLdapUser
+)
 
 LOGGER = logging.getLogger(__name__)
 
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument,no-member
 
-
-@receiver(post_save, sender=User)
+@receiver(post_save, sender=get_user_model())
 def create_user_profile(sender, instance, created, **kwargs):
     """create alert preference when a user is created"""
     if created:

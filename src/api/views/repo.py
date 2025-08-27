@@ -6,7 +6,11 @@ from rest_framework.response import Response
 
 from api.lib.viewsets import SimpleHyperlinkedModelViewSet
 from api.router import router
-from api.serializers import RepositorySerializer, RepositoryEventSerializer, RepositoryStatisticSerializer
+from api.serializers import (
+    RepositorySerializer,
+    RepositoryEventSerializer,
+    RepositoryStatisticSerializer
+)
 from borghive.models import Repository, RepositoryLocation, RepositoryUser, RepositoryEvent, RepositoryStatistic
 
 LOGGER = logging.getLogger(__name__)

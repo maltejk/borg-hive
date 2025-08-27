@@ -4,6 +4,8 @@ from django.core.management.base import BaseCommand
 
 from borghive.models import RepositoryUser, RepositoryMode
 
+# pylint: disable=no-member
+
 LOGGER = logging.getLogger(__name__)
 
 KEY_CMD_PREFIX = 'command="'
