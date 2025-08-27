@@ -34,7 +34,7 @@ class Pushover():
         }
         data.update(kwargs)
 
-        r = requests.post(url, data=data)
+        r = requests.post(url, data=data, timeout=5)
         # files = {
         # "attachment": ("image.jpg", open("your_image.jpg", "rb"), "image/jpeg")
         # })

@@ -50,7 +50,7 @@ class EmailNotification(Notification):
     """
     email notification
     """
-    # pylint: disable=R0201
+    # pylint: disable=no-self-use
 
     form_class = 'EmailNotificationForm'
     n_type = 'email'
