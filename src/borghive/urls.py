@@ -12,6 +12,7 @@ from borghive.views import (
     SSHPublicKeyUpdateView
 )
 
+# pylint: disable=line-too-long
 urlpatterns = [
     path('', RedirectView.as_view(url='repository/list', permanent=False), name='index'),
     path('repository/list/', RepositoryListView.as_view(), name='repository-list'),
