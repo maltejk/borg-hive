@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.core import mail
 from django.contrib.auth.models import User
 from borghive.models import Repository, RepositoryUser, RepositoryEvent, RepositoryLocation
-from borghive.models import EmailNotification, PushoverNotification
+from borghive.models import EmailNotification, PushoverNotification, PagerDutyNotification
 from borghive.tasks import alert_guard_tour
 
 from borghive.forms import AlertPreferenceForm
@@ -117,6 +117,69 @@ class PushoverNotificationTest(TestCase):
         self.assertEqual(response.status_code, 302)
         notification.refresh_from_db()
         self.assertEqual(notification.user, 'mnop')
+
+
+class PagerDutyNotificationTest(TestCase):
+
+    fixtures = [
+        'testing/users.yaml'
+    ]
+
+    @mock.patch('requests.post', autospec=True)
+    def test_send_pagerduty_notification(self, monkey):
+        notification = PagerDutyNotification.objects.create(name='Test PagerDuty', integration_key='test-key', owner=User.objects.get(username='admin'))
+        notification.notify('Test alert')
+        self.assertTrue(monkey.called)
+        expected_payload = {
+            "routing_key": "test-key",
+            "event_action": "trigger",
+            "payload": {
+                "summary": "Test alert",
+                "source": "BorgHive",
+                "severity": "info"
+            }
+        }
+        monkey.assert_called_with('https://events.pagerduty.com/v2/enqueue', json=expected_payload, timeout=5)
+    
+    def test_view_create(self):
+        self.client.force_login(User.objects.get_or_create(username='admin')[0])
+        notification = PagerDutyNotification.objects.create(name='Test PagerDuty', integration_key='test-key', owner=User.objects.get(username='admin'))
+        response = self.client.get(reverse('notification-create', kwargs={'n_type': 'pagerduty'}))
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_update(self):
+        self.client.force_login(User.objects.get_or_create(username='admin')[0])
+        notification = PagerDutyNotification.objects.create(name='Old Name', integration_key='old-key', owner=User.objects.get(username='admin'))
+        data = {
+            'name': 'New Name',
+            'integration_key': 'new-key'
+        }
+        response = self.client.post(reverse('notification-update', kwargs={'pk': notification.id}), data=data)
+        self.assertEqual(response.status_code, 302)
+        notification.refresh_from_db()
+        self.assertEqual(notification.name, 'New Name')
+        self.assertEqual(notification.integration_key, 'new-key')
+
+    def test_get_test_params_method(self):
+        notification = PagerDutyNotification.objects.create(name='Test PagerDuty', integration_key='test-key', owner=User.objects.get(username='admin'))
+        params = notification.get_test_params()
+        self.assertEqual(params, {'summary': 'Test alert from BorgHive'})
+
+    @mock.patch('requests.post', autospec=True)
+    def test_notify_method(self, monkey):
+        notification = PagerDutyNotification.objects.create(name='Test PagerDuty', integration_key='test-key', owner=User.objects.get(username='admin'))
+        notification.notify('Test alert')
+        self.assertTrue(monkey.called)
+        expected_payload = {
+            "routing_key": "test-key",
+            "event_action": "trigger",
+            "payload": {
+                "summary": "Test alert",
+                "source": "BorgHive",
+                "severity": "info"
+            }
+        }
+        monkey.assert_called_with('https://events.pagerduty.com/v2/enqueue', json=expected_payload, timeout=5)
 
 
 class AlertTest(TestCase):

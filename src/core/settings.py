@@ -246,3 +246,8 @@ if DEBUG:
 REST_FRAMEWORK = {
     'URL_FIELD_NAME': '_href'
 }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# PagerDuty API Configuration
+PAGERDUTY_API_URL = 'https://events.pagerduty.com'

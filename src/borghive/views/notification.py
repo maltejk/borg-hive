@@ -9,8 +9,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic.list import ListView
 
 import borghive.forms
-from borghive.forms import (
-    AlertPreferenceForm, EmailNotificationForm, PushoverNotificationForm)
+from borghive.forms import AlertPreferenceForm, EmailNotificationForm, PushoverNotificationForm
 from borghive.views.base import BaseView
 from borghive.models import EmailNotification, PushoverNotification, Notification
 
