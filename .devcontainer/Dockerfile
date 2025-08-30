@@ -1,7 +1,14 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.10-slim-bookworm AS base
 
 LABEL org.opencontainers.image.authors="malte@maltejk.de"
 LABEL org.opencontainers.image.source="https://github.com/maltejk/borg-hive"
+
+FROM ghcr.io/astral-sh/uv:0.8.14 AS uv
+
+FROM base
+
+COPY --from=uv --chown=root:root /uv  /usr/local/bin/uv
+COPY --from=uv --chown=root:root /uvx /usr/local/bin/uvx
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTE=1
