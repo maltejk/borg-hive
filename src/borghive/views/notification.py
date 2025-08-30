@@ -1,7 +1,9 @@
 import logging
+from smtplib import SMTPException
+import requests.exceptions
 
 from django.contrib import messages
-from django.shortcuts import redirect, reverse
+from django.shortcuts import redirect, reverse, render
 from django.urls import reverse_lazy
 from django.views.generic import View
 from django.views.generic.detail import DetailView, SingleObjectMixin
@@ -14,7 +16,7 @@ from borghive.forms import (
 from borghive.views.base import BaseView
 from borghive.models import EmailNotification, PushoverNotification, Notification
 
-# pylint: disable=protected-access,disable=arguments-differ,no-member
+# pylint: disable=protected-access,arguments-differ,no-member,too-many-ancestors
 
 
 LOGGER = logging.getLogger(__name__)
@@ -48,8 +50,6 @@ class NotificationListView(BaseView, ListView):
     """
     notification list and alert preference
     """
-
-    # pylint: disable=too-many-ancestors
 
     template_name = 'borghive/notification_list.html'
     queryset = Notification.objects.all()
@@ -87,11 +87,18 @@ class NotificationDetailView(BaseView, DetailView):
 
 
 class NotificationDeleteView(BaseView, DeleteView):
-    """ssh public key delete"""
+    """notification delete"""
 
     model = Notification
     success_url = reverse_lazy('notification-list')
     template_name = 'borghive/notification_delete.html'
+
+    def get_form_kwargs(self):
+        """Remove owner and user kwargs that BaseForm or Form doesn't accept"""
+        kwargs = super().get_form_kwargs()
+        kwargs.pop('owner', None)
+        kwargs.pop('user', None)
+        return kwargs
 
 
 class NotificationCreateView(NotificationBaseView, CreateView):
@@ -135,22 +142,40 @@ class NotificationUpdateView(NotificationBaseView, UpdateView):
         self.form_class = getattr(borghive.forms, obj.form_class, None)
         return super().dispatch(*args, **kwargs)
 
-
 class NotificationTestView(View, SingleObjectMixin):
-    """notification create view - handle parse errors"""
+    """notification test view - handle parse errors"""
 
-    # pylint: disable=W0703,unused-argument
+    # pylint: disable=broad-except,unused-argument
 
     model = Notification
-
     object = None
 
     def get(self, *args, **kwargs):
         """send test notification"""
-        self.object = self.get_object(queryset=self.model.objects.filter(id=kwargs['pk']))
+        message = None
         try:
+            self.object = self.get_object(queryset=self.model.objects.filter(id=kwargs['pk']))
             self.object.notify(**self.object.get_test_params())
-            messages.add_message(self.request, messages.SUCCESS, f'Sent {self.object}')
-        except Exception:
-            messages.add_message(self.request, messages.ERROR, 'Test failed.')
-        return redirect(reverse('notification-list'))
+            message = f'Sent {self.object}'
+        except self.model.DoesNotExist:
+            message = 'Notification not found.'
+        except SMTPException as e:
+            LOGGER.error('SMTP error during test notification: %s', e)
+            message = f'Test failed due to email error: {e}'
+        except requests.exceptions.RequestException as e:
+            LOGGER.error('Network error during test notification: %s', e)
+            message = f'Test failed due to network error: {e}'
+        except Exception as e:
+            LOGGER.error('Unexpected error during test notification: %s', e)
+            message = f'Test failed: {e}'
+
+        if self.request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            # Return HTML for modal display
+            return render(self.request, 'borghive/notification_test.html', {'message': message})
+        else:
+            # Redirect with message for non-modal requests
+            if 'Sent' in message:
+                messages.add_message(self.request, messages.SUCCESS, message)
+            else:
+                messages.add_message(self.request, messages.ERROR, message)
+            return redirect(reverse('notification-list'))

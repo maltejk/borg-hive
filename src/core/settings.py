@@ -170,7 +170,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = '/staticfiles'
-STATICFILES_DIRS = ['static']
+STATICFILES_DIRS = [
+    'src/static',
+    'src/borghive/static'
+]
 
 #
 # Celery
@@ -183,16 +186,32 @@ CELERY_RESULT_BACKEND = env('CELERY_RESULT_BACKEND', 'redis://redis:6379/0')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
+            'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        },
+    },
     'handlers': {
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'console',
         },
     },
     'loggers': {
         'django': {
             'handlers': ['console'],
             'propagate': True,
-            'level': env('DJANGO_LOG_LEVEL', 'INFO')
+            'level': env('DJANGO_LOG_LEVEL', 'DEBUG')
+        },
+        'django.utils.autoreload': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'INFO'
+        },
+        'django.template': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': 'INFO'
         },
         'borghive': {
             'handlers': ['console'],
@@ -207,8 +226,8 @@ LOGGING = {
         'rules': {
             'handlers': ['console'],
             'propagate': True,
-            'level': env('DJANGO_LOG_LEVEL', 'INFO')
-        }
+            'level': env('DJANGO_LOG_LEVEL', 'DEBUG')
+        },
     },
 }
 
