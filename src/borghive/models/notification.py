@@ -8,7 +8,7 @@ from django.db import models
 from polymorphic.models import PolymorphicModel
 
 from borghive.models.base import BaseModel
-from borghive.lib.notification import Pushover
+from borghive.lib.notification import Pushover, PagerDuty
 
 LOGGER = logging.getLogger(__name__)
 
@@ -104,3 +104,29 @@ class PushoverNotification(Notification):
 
         pushover = Pushover(self.user, self.token)
         pushover.push(message=message, *args, **kwargs)
+
+
+class PagerDutyNotification(Notification):
+    """
+    PagerDuty notification
+    """
+
+    form_class = 'PagerDutyNotificationForm'
+    n_type = 'pagerduty'
+
+    name = models.CharField(max_length=256)
+    integration_key = models.CharField(max_length=256)
+
+    def __str__(self):
+        return f'PagerDutyNotification: {self.name}'
+
+    def get_test_params(self):
+        """get params for test notification"""
+        return {'summary': 'Test alert from BorgHive'}
+
+    def notify(self, summary, *args, **kwargs):
+        """send PagerDuty alert"""
+        LOGGER.debug('send PagerDuty notification: "%s"', summary)
+
+        pagerduty = PagerDuty(self.integration_key)
+        pagerduty.trigger(summary=summary, *args, **kwargs)
