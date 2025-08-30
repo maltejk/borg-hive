@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 
 import unittest
 import unittest.mock as mock
@@ -10,9 +11,11 @@ from django.urls import reverse
 from django.utils import timezone
 from django.core import mail
 from django.contrib.auth.models import User
+from django.contrib.admin.sites import AdminSite
 from borghive.models import Repository, RepositoryUser, RepositoryEvent, RepositoryLocation
 from borghive.models import EmailNotification, PushoverNotification
 from borghive.tasks import alert_guard_tour
+from borghive.admin import NotifyAdmin  # Add this import
 
 from borghive.forms import AlertPreferenceForm
 
@@ -273,3 +276,54 @@ class AlertTest(TestCase):
 
         alert_guard_tour(repo_id=repo8.id)
         self.assertEqual(len(mail.outbox), 1)
+
+
+class AdminTest(TestCase):
+
+    fixtures = [
+        'testing/users.yaml'
+    ]
+
+    def setUp(self):
+        self.client = Client()
+        self.client.force_login(User.objects.get_or_create(username='admin')[0])
+        self.site = AdminSite()
+        self.admin = NotifyAdmin(EmailNotification, self.site)  # Use EmailNotification as example
+
+    @patch('borghive.models.notification.EmailNotification.notify')
+    def test_test_notify_action_email(self, mock_notify):
+        """Test the test_notify admin action for EmailNotification"""
+        notification = EmailNotification.objects.create(email='test@example.com', owner=User.objects.get(username='admin'))
+        queryset = EmailNotification.objects.filter(pk=notification.pk)
+        
+        # Simulate the admin action
+        self.admin.test_notify(None, queryset)
+        
+        # Assert notify was called with test params
+        mock_notify.assert_called_once_with(**notification.get_test_params())
+
+    @patch('borghive.models.notification.PushoverNotification.notify')
+    def test_test_notify_action_pushover(self, mock_notify):
+        """Test the test_notify admin action for PushoverNotification"""
+        notification = PushoverNotification.objects.create(name='Test Pushover', user='testuser', token='testtoken', owner=User.objects.get(username='admin'))
+        queryset = PushoverNotification.objects.filter(pk=notification.pk)
+        
+        # Simulate the admin action
+        admin = NotifyAdmin(PushoverNotification, self.site)
+        admin.test_notify(None, queryset)
+        
+        # Assert notify was called with test params
+        mock_notify.assert_called_once_with(**notification.get_test_params())
+
+    @patch('borghive.models.notification.PagerDutyNotification.notify')
+    def test_test_notify_action_pagerduty(self, mock_notify):
+        """Test the test_notify admin action for PagerDutyNotification"""
+        notification = PagerDutyNotification.objects.create(name='Test PagerDuty', integration_key='testkey', owner=User.objects.get(username='admin'))
+        queryset = PagerDutyNotification.objects.filter(pk=notification.pk)
+        
+        # Simulate the admin action
+        admin = NotifyAdmin(PagerDutyNotification, self.site)
+        admin.test_notify(None, queryset)
+        
+        # Assert notify was called with test params
+        mock_notify.assert_called_once_with(**notification.get_test_params())
