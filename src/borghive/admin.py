@@ -16,6 +16,3 @@ class NotifyAdmin(admin.ModelAdmin):
         """send test notification for each notification in queryset"""
         for notification in queryset:
             notification.notify(**notification.get_test_params())
-
-
-
