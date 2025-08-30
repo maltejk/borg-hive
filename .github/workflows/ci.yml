@@ -1,0 +1,56 @@
+name: Lint, Test, Coverage
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.10.18
+
+    - name: Install system dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libmariadb-dev mariadb-client libsasl2-dev python3-dev libldap2-dev libssl-dev
+
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt -r requirements-dev.txt
+
+    - name: Run tests with coverage
+      env:
+        TEST_MODE: True
+        DEBUG: True
+        CELERY_TASK_ALWAYS_EAGER: True
+      run: |
+        coverage run src/manage.py test src
+
+    - name: Run pylama linting
+      run: |
+        pylama src
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./.coverage
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
