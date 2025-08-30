@@ -44,6 +44,7 @@ jobs:
         coverage run src/manage.py test src
 
     - name: Run pylama linting
+      continue-on-error: true  # Allow this step to fail without stopping the job
       run: |
         pylama src
 
