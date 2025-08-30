@@ -1,5 +1,5 @@
 {% load crispy_forms_tags %}
-<form method="post" action="{% url 'notification-create' object.n_type %}">
+<form method="post" action="{% url 'notification-update' object.pk %}">
   {% csrf_token %}
   <div class="modal-header">
    <h4 class="modal-title">Edit {{object.n_type|capfirst}} Notification</h4>
