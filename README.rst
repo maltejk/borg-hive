@@ -52,12 +52,12 @@ What it should also have in the Future / Todo
         :alt: Documentation
         :target: https://borg-hive.readthedocs.org/en/latest/
 
-.. |build| image:: https://api.travis-ci.com/bpereto/borg-hive.svg?branch=master
+.. |build| image:: https://github.com/maltejk/borg-hive/actions/workflows/ci.yml/badge.svg?branch=master
         :alt: Build Status
-        :target: https://travis-ci.com/bpereto/borg-hive
+        :target: https://github.com/maltejk/borg-hive/actions
 
-.. |coverage| image:: https://codecov.io/github/bpereto/borg-hive/coverage.svg?branch=master
+.. |coverage| image:: https://codecov.io/github/maltejk/borg-hive/coverage.svg?branch=master
         :alt: Test Coverage
-        :target: https://codecov.io/github/bpereto/borg-hive?branch=master
+        :target: https://codecov.io/github/maltejk/borg-hive?branch=master
 
 .. end-badges
