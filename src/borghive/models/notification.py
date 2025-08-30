@@ -50,7 +50,6 @@ class EmailNotification(Notification):
     """
     email notification
     """
-    # pylint: disable=no-self-use
 
     form_class = 'EmailNotificationForm'
     n_type = 'email'
@@ -82,7 +81,7 @@ class PushoverNotification(Notification):
     """
     pushover notification
     """
-    # pylint: disable=method-could-be-a-function
+
     form_class = 'PushoverNotificationForm'
     n_type = 'pushover'
 
