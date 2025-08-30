@@ -17,7 +17,6 @@ WORKDIR /deps
 
 COPY requirements.txt .
 COPY requirements-dev.txt .
-COPY docs/requirements.txt requirements-docs.txt
-RUN pip install -r requirements.txt -r requirements-dev.txt -r requirements-docs.txt
+RUN pip install -r requirements.txt -r requirements-dev.txt
 
 RUN useradd -m -s /bin/bash devcontainer
