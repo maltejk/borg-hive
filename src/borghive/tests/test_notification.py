@@ -17,7 +17,7 @@ from borghive.tasks import alert_guard_tour
 from borghive.forms import AlertPreferenceForm
 
 
-class AlertPrefernceTest(TestCase):
+class AlertPreferenceTest(TestCase):
 
     fixtures = [
         'testing/users.yaml',
@@ -85,6 +85,30 @@ class EmailNotificationTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(mail.outbox), 1)
 
+    def test_get_test_params_method(self):
+        notification = EmailNotification.objects.create(email='hohoho@northpole.local', owner=User.objects.get(username='admin'))
+        params = notification.get_test_params()
+        self.assertEqual(params, {'subject': 'test notification', 'message': 'friendly test notification from borghive'})
+
+    def test_notify_method(self):
+        notification = EmailNotification.objects.create(email='hohoho@northpole.local', owner=User.objects.get(username='admin'))
+        notification.notify('test subject', 'test message')
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertEqual(mail.outbox[0].subject, 'test subject')
+        self.assertEqual(mail.outbox[0].body, 'test message')
+        self.assertEqual(mail.outbox[0].to, ['hohoho@northpole.local'])
+
+    def test_view_update_email(self):
+        self.client.force_login(User.objects.get_or_create(username='admin')[0])
+        notification = EmailNotification.objects.create(email='hohoho@northpole.local', owner=User.objects.get(username='admin'))
+        data = {
+            'email': 'penguin@southpole.local'
+        }
+        response = self.client.post(reverse('notification-update', kwargs={'pk': notification.id}), data=data)
+        self.assertEqual(response.status_code, 302)
+        notification.refresh_from_db()
+        self.assertEqual(notification.email, 'penguin@southpole.local')
+
 
 class PushoverNotificationTest(TestCase):
 
@@ -97,7 +121,7 @@ class PushoverNotificationTest(TestCase):
         notification = PushoverNotification.objects.create(name='spock an enterprise', user='abc', token='xyz', owner=User.objects.get(username='admin'))
         notification.notify('unittest')
         self.assertTrue(monkey.called)
-        monkey.assert_called_with('https://api.pushover.net:443/1/messages.json', data={'user': 'abc', 'token': 'xyz', 'message': 'unittest'})
+        monkey.assert_called_with('https://api.pushover.net:443/1/messages.json', data={'user': 'abc', 'token': 'xyz', 'message': 'unittest'}, timeout=5)
     
     def test_view_create(self):
         self.client.force_login(User.objects.get_or_create(username='admin')[0])
@@ -117,6 +141,18 @@ class PushoverNotificationTest(TestCase):
         self.assertEqual(response.status_code, 302)
         notification.refresh_from_db()
         self.assertEqual(notification.user, 'mnop')
+
+    def test_get_test_params_method(self):
+        notification = PushoverNotification.objects.create(name='spock an enterprise', user='abc', token='xyz', owner=User.objects.get(username='admin'))
+        params = notification.get_test_params()
+        self.assertEqual(params, {'message': 'friendly test notification from borghive'})
+
+    @mock.patch('requests.post', autospec=True)
+    def test_notify_method(self, monkey):
+        notification = PushoverNotification.objects.create(name='spock an enterprise', user='abc', token='xyz', owner=User.objects.get(username='admin'))
+        notification.notify('unittest')
+        self.assertTrue(monkey.called)
+        monkey.assert_called_with('https://api.pushover.net:443/1/messages.json', data={'user': 'abc', 'token': 'xyz', 'message': 'unittest'}, timeout=5)
 
 
 class AlertTest(TestCase):
