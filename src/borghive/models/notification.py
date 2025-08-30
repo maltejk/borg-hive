@@ -82,7 +82,7 @@ class PushoverNotification(Notification):
     """
     pushover notification
     """
-    # pylint: disable=R0201
+    # pylint: disable=method-could-be-a-function
     form_class = 'PushoverNotificationForm'
     n_type = 'pushover'
 
