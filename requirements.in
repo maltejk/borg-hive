@@ -10,7 +10,7 @@ djangorestframework-queryfields==1.0.0
 djangorestframework==3.13.1
 environs==9.5.0
 inotify==0.2.10
-mysqlclient==2.0.3
+mariadb==1.1.13
 pyyaml==6.0
 redis==4.1.2
 requests==2.27.1
