@@ -1,24 +1,41 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.10-slim-bookworm AS base
 
 LABEL org.opencontainers.image.authors="malte@maltejk.de"
 LABEL org.opencontainers.image.source="https://github.com/maltejk/borg-hive"
+
+FROM ghcr.io/astral-sh/uv:0.8.14 AS uv
+
+FROM base
+
+COPY --from=uv --chown=root:root /uv  /usr/local/bin/uv
+COPY --from=uv --chown=root:root /uvx /usr/local/bin/uvx
 
 # set environment variables
 ENV PYTHONDONTWRITEBYTE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y libmariadb-dev mariadb-client python3-pip libsasl2-dev python3-dev libldap2-dev libssl-dev git pkg-config && rm -rf /var/lib/apt/lists/*
+RUN apt-get update \
+    && apt-get install -y \
+        libmariadb-dev mariadb-client \
+        libsasl2-dev python3-dev libldap2-dev \
+        libssl-dev git pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /app /staticfiles && groupadd -g 1000 borg && \
-    useradd -rm -u 1000 -g 1000 borg && chown -R borg:borg /app /staticfiles
+RUN mkdir /app /staticfiles \
+    && groupadd -g 1000 borg \
+    && useradd -rm -u 1000 -g 1000 borg \
+    && chown -R borg:borg /app /staticfiles
+
 WORKDIR /app
-COPY requirements.txt /app/
 
-RUN pip3 install --no-cache -r requirements.txt
+COPY pyproject.toml /app/pyproject.toml
+COPY uv.lock        /app/uv.lock
+
+RUN uv sync
 
 # install uwsgi now because it takes a little while
-RUN pip3 install --no-cache uwsgi
+RUN uv pip install wsgi
 
 COPY src /app/
 COPY scripts/init.sh /
