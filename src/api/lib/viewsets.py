@@ -12,6 +12,7 @@ from rest_framework.viewsets import ModelViewSet
 from .serializers import SimpleModelSerializer, SimpleHyperlinkedModelSerializer
 
 
+# pylint: disable=too-many-ancestors
 class SimpleModelViewSet(ModelViewSet):
     """
     A REST framework `ModelViewSet` on dope, which only requires a model to
@@ -85,6 +86,7 @@ class SimpleModelViewSet(ModelViewSet):
         return serializer
 
 
+#  pylint: disable=too-many-ancestors
 class SimpleHyperlinkedModelViewSet(SimpleModelViewSet):
     """
     A REST framework `ModelViewSet` on dope, which only requires a model to

@@ -24,6 +24,7 @@ LOGGER = logging.getLogger(__name__)
 __all__ = ["RepositoryViewSet"]
 
 
+#  pylint: disable=too-many-ancestors
 class RepositoryViewSet(SimpleHyperlinkedModelViewSet):
     """
     repository viewset
@@ -61,59 +62,63 @@ class RepositoryViewSet(SimpleHyperlinkedModelViewSet):
         return Response(serializer.data)
 
 
+#  pylint: disable=too-many-ancestors
 class RepositoryUserViewSet(SimpleHyperlinkedModelViewSet):
     """
     repositoryuser viewset
     """
 
-    queryset = RepositoryUser.objects.all()
+    queryset = RepositoryUser.objects.all()  # pylint: disable=no-member
     model = RepositoryUser
 
     def get_queryset(self):
-        return RepositoryUser.objects.filter(
+        return RepositoryUser.objects.filter(  # pylint: disable=no-member
             Q(repository__owner=self.request.user)
             | Q(repository__group__in=self.request.user.groups.all())
         )
 
 
+#  pylint: disable=too-many-ancestors
 class RepositoryEventViewSet(SimpleHyperlinkedModelViewSet):
     """
     repositoryevent viewset
     """
 
-    queryset = RepositoryEvent.objects.all()
+    queryset = RepositoryEvent.objects.all()  # pylint: disable=no-member
     serializer_class = RepositoryEventSerializer
     model = RepositoryEvent
 
     def get_queryset(self):
-        return RepositoryEvent.objects.filter(
+        return RepositoryEvent.objects.filter(  # pylint: disable=no-member
             Q(repo__owner=self.request.user)
             | Q(repo__group__in=self.request.user.groups.all())
         )
 
 
+#  pylint: disable=too-many-ancestors
 class RepositoryStatisticViewSet(SimpleHyperlinkedModelViewSet):
     """
     repositorystatistic viewset
     """
 
-    queryset = RepositoryStatistic.objects.all()
+    queryset = RepositoryStatistic.objects.all()  # pylint: disable=no-member
     serializer_class = RepositoryStatisticSerializer
     model = RepositoryStatistic
 
     def get_queryset(self):
-        return RepositoryStatistic.objects.filter(
+        return RepositoryStatistic.objects.filter(  # pylint: disable=no-member
             Q(repo__owner=self.request.user)
             | Q(repo__group__in=self.request.user.groups.all())
         )
 
 
+#  pylint: disable=too-many-ancestors
 class RepositoryLocationViewSet(SimpleHyperlinkedModelViewSet):
     """
     repositorylocation viewset
     """
 
-    queryset = RepositoryLocation.objects.all()
+    queryset = RepositoryLocation.objects.all()  # pylint: disable=no-member
     model = RepositoryLocation
 
 

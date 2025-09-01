@@ -8,6 +8,7 @@ from api.serializers import SimpleGroupSerializer, SimpleOwnerSerializer
 __all__ = ["UserViewset", "GroupViewset"]
 
 
+#  pylint: disable=too-many-ancestors
 class UserViewset(SimpleHyperlinkedModelViewSet):
     """
     user viewset for api
@@ -18,6 +19,7 @@ class UserViewset(SimpleHyperlinkedModelViewSet):
     model = User
 
 
+#  pylint: disable=too-many-ancestors
 class GroupViewset(SimpleHyperlinkedModelViewSet):
     """
     group viewset for api

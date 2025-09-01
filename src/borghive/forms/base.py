@@ -9,6 +9,7 @@ from django.forms.models import ModelChoiceField, ModelMultipleChoiceField
 LOGGER = logging.getLogger(__name__)
 
 
+# pylint: disable=too-few-public-methods
 class BaseForm(forms.ModelForm):
     """
     base form to handle complex owner filter

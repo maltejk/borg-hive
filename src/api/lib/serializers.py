@@ -38,9 +38,9 @@ class SimpleModelSerializer(
         """
 
         if not hasattr(self, "Meta"):
-            self.Meta = type(
+            self.Meta = type(  # pylint: disable=invalid-name
                 "Meta", (), {"model": model, "fields": fields}
-            )  # pylint: disable=invalid-name
+            )
 
         super().__init__(*args, **kwargs)
 
@@ -96,9 +96,8 @@ class SimpleHyperlinkedModelSerializer(
         Create nested fields for forward and reverse relationships.
         """
 
-        class NestedSerializer(
-            SimpleHyperlinkedModelSerializer
-        ):  # pylint: disable=too-few-public-methods,missing-docstring
+        # pylint: disable=too-many-ancestors
+        class NestedSerializer(SimpleHyperlinkedModelSerializer):
             class Meta:  # pylint: disable=too-few-public-methods,missing-docstring
                 model = relation_info.related_model
                 depth = nested_depth - 1

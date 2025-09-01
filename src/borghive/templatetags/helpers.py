@@ -4,9 +4,8 @@ helper functions
 
 from django import template
 
-# pylint: disable=no-else-return,C0209
 
-
+# pylint: disable=no-else-return,consider-using-f-string,invalid-name
 def humanmegabytes(MB):
     """Return the given megabytes as a human friendly MB, GB, or TB string"""
 

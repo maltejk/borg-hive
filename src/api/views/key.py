@@ -10,6 +10,7 @@ LOGGER = logging.getLogger(__name__)
 __all__ = ["SSHPublicKeyViewSet"]
 
 
+#  pylint: disable=too-many-ancestors
 class SSHPublicKeyViewSet(SimpleHyperlinkedModelViewSet):
     """
     SSH-Publickey Viewset

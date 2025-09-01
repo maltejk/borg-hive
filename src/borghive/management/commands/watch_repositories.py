@@ -3,7 +3,6 @@ import os
 import sys
 
 import inotify.adapters
-from inotify.calls import InotifyError
 from django import db
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
@@ -28,7 +27,7 @@ class Command(BaseCommand):
         """arguments parser"""
         parser.add_argument("--repo-path", type=str, default="/repos")
 
-    def get_repo_by_path(self, path):  # pylint: disable=no-self-use
+    def get_repo_by_path(self, path):
         """distill repo name from inotify path"""
         repo_name = path.split("/")[-1]
         repo_user = path.split("/")[-2]

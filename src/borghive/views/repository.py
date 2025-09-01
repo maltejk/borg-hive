@@ -18,12 +18,13 @@ import borghive.exceptions
 LOGGER = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-ancestors
 class RepositoryListView(BaseView, ListView):
     """repository list"""
 
     model = Repository
 
-    def get_total_usage(self):  # pylint: disable=no-self-use
+    def get_total_usage(self):
         """get total usage from repostatistic of all repos"""
         total_size = 0
         for repo in Repository.objects.by_owner_or_group(user=self.request.user):
@@ -39,6 +40,7 @@ class RepositoryListView(BaseView, ListView):
         return context
 
 
+# pylint: disable=too-many-ancestors
 class RepositoryDetailView(BaseView, DetailView):
     """repository details"""
 
@@ -83,6 +85,7 @@ class RepositoryDetailView(BaseView, DetailView):
         return redirect(reverse("repository-detail", args=[pk]))
 
 
+# pylint: disable=too-many-ancestors
 class RepositoryUpdateView(BaseView, UpdateView):
     """repository update"""
 
@@ -92,6 +95,7 @@ class RepositoryUpdateView(BaseView, UpdateView):
     template_name = "borghive/repository_update.html"
 
 
+# pylint: disable=too-many-ancestors
 class RepositoryDeleteView(BaseView, DeleteView):
     """repository delete"""
 
@@ -100,6 +104,7 @@ class RepositoryDeleteView(BaseView, DeleteView):
     template_name = "borghive/repository_delete.html"
 
 
+# pylint: disable=too-many-ancestors
 class RepositoryCreateView(BaseView, CreateView):
     """repository create"""
 

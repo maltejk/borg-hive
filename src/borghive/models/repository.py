@@ -45,7 +45,7 @@ class RepositoryUser(BaseModel):
     represents a uniq user related to one repository
     """
 
-    # pylint: disable=no-self-use,signature-differs,no-member
+    # pylint: disable=signature-differs,no-member
 
     MIN_UID = 1111
     MAX_UID = 99999
@@ -331,8 +331,8 @@ class Repository(BaseModel):
         alert.save()
 
         borghive.tasks.alert.fire_alert.delay(
-            repo_id=self.id, alert_id=alert.id
-        )  # pylint: disable=no-member
+            repo_id=self.id, alert_id=alert.id  # pylint: disable=no-member
+        )
 
         return True
 

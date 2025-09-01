@@ -2,6 +2,7 @@ from borghive.forms.base import BaseForm
 from borghive.models import SSHPublicKey
 
 
+# pylint: disable=too-few-public-methods
 class SSHPublicKeyForm(BaseForm):
     """
     form to create an ssh public key
