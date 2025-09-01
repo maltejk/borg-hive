@@ -16,14 +16,22 @@ class SSHPublickeySerializer(SimpleHyperlinkedModelSerializer):
     fingerprint = serializers.CharField(read_only=True)
     comment = serializers.CharField(read_only=True)
 
-    owner = SimpleOwnerSerializer(read_only=True, default=serializers.CurrentUserDefault())
+    owner = SimpleOwnerSerializer(
+        read_only=True, default=serializers.CurrentUserDefault()
+    )
     group = SimpleGroupSerializer(many=True, read_only=True)
-    group_id = serializers.PrimaryKeyRelatedField(source='group', queryset=Group.objects.all(), write_only=True, many=True, required=False)
+    group_id = serializers.PrimaryKeyRelatedField(
+        source="group",
+        queryset=Group.objects.all(),
+        write_only=True,
+        many=True,
+        required=False,
+    )
 
     def create(self, validated_data):
-        validated_data['owner'] = self.context['request'].user
+        validated_data["owner"] = self.context["request"].user
         return super().create(validated_data)
 
     class Meta:
         model = SSHPublicKey
-        fields = '__all__'
+        fields = "__all__"

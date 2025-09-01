@@ -13,4 +13,6 @@ class OwnerOrGroupManager(models.Manager):
         """
         use Django Q to filter by owner or group of user
         """
-        return self.get_queryset().filter(Q(owner=user) | Q(group__in=user.groups.all()))
+        return self.get_queryset().filter(
+            Q(owner=user) | Q(group__in=user.groups.all())
+        )

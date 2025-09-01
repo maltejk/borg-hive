@@ -17,7 +17,7 @@ def create_repo_statistic(repo_id=None):
     else:
         repos = Repository.objects.all()
 
-    LOGGER.info('refresh repo statistics for: %s', repos)
+    LOGGER.info("refresh repo statistics for: %s", repos)
     for repo in repos:
         repo.refresh()
 
@@ -26,14 +26,18 @@ def create_repo_statistic(repo_id=None):
 def get_repo_size(repo_id):
     """get repo size - heavy fs operation"""
     repo = Repository.objects.get(id=repo_id)
-    return float(subprocess.check_output(['du', '-sm', repo.get_repo_path()]).split()[0].decode('utf-8'))
+    return float(
+        subprocess.check_output(["du", "-sm", repo.get_repo_path()])
+        .split()[0]
+        .decode("utf-8")
+    )
 
 
 @app.task
 def repository_delete(repo_path):
     """delete repository on filesystem"""
-    LOGGER.info('delete repository: %s', repo_path)
+    LOGGER.info("delete repository: %s", repo_path)
     try:
         shutil.rmtree(repo_path)
     except FileNotFoundError:
-        LOGGER.warning('repository path does not exist: %s', repo_path)
+        LOGGER.warning("repository path does not exist: %s", repo_path)

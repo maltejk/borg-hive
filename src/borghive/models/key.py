@@ -24,8 +24,16 @@ class SSHPublicKey(BaseModel):
     """
 
     name = models.CharField(max_length=256)
-    public_key = models.TextField(max_length=2048, validators=[RegexValidator(
-        regex=settings.BORGHIVE['SSH_PUBLIC_KEY_REGEX'], message="SSH Public Key should match format: ssh-xxx AAAA... comment"), ssh_public_key_validator])
+    public_key = models.TextField(
+        max_length=2048,
+        validators=[
+            RegexValidator(
+                regex=settings.BORGHIVE["SSH_PUBLIC_KEY_REGEX"],
+                message="SSH Public Key should match format: ssh-xxx AAAA... comment",
+            ),
+            ssh_public_key_validator,
+        ],
+    )
 
     type = models.CharField(max_length=50)
     bits = models.IntegerField()
@@ -41,7 +49,7 @@ class SSHPublicKey(BaseModel):
 
     def __str__(self):
         """representation"""
-        return f'SSHPublicKey: {self.name}'
+        return f"SSHPublicKey: {self.name}"
 
     def save(self, *args, **kwargs):  # pylint: disable=signature-differs
         """override save to parse public key"""
@@ -53,7 +61,7 @@ class SSHPublicKey(BaseModel):
         key = sshpubkeys.SSHKey(self.public_key)
         key.parse()
 
-        self.type = key.key_type.decode('utf-8').replace('ssh-', '')
+        self.type = key.key_type.decode("utf-8").replace("ssh-", "")
         self.bits = key.bits
         self.fingerprint = key.hash_sha256()
         self.comment = key.comment

@@ -1,4 +1,3 @@
-
 from borghive.forms.base import BaseForm
 from borghive.models import SSHPublicKey
 
@@ -10,8 +9,14 @@ class SSHPublicKeyForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['public_key'].widget.attrs['placeholder'] = 'ssh-rsa AAAA... comment'
+        self.fields["public_key"].widget.attrs[
+            "placeholder"
+        ] = "ssh-rsa AAAA... comment"
 
     class Meta:
         model = SSHPublicKey
-        fields = ('public_key', 'name', 'group',)
+        fields = (
+            "public_key",
+            "name",
+            "group",
+        )

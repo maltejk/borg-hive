@@ -7,13 +7,14 @@ from borghive.models import SSHPublicKey
 
 LOGGER = logging.getLogger(__name__)
 
-__all__ = ['SSHPublicKeyViewSet']
+__all__ = ["SSHPublicKeyViewSet"]
 
 
 class SSHPublicKeyViewSet(SimpleHyperlinkedModelViewSet):
     """
     SSH-Publickey Viewset
     """
+
     queryset = SSHPublicKey.objects.all()
     serializer_class = SSHPublickeySerializer
     model = SSHPublicKey
@@ -22,7 +23,7 @@ class SSHPublicKeyViewSet(SimpleHyperlinkedModelViewSet):
         return SSHPublicKey.objects.by_owner_or_group(self.request.user)
 
 
-router.register('sshpublickeys', SSHPublicKeyViewSet)
+router.register("sshpublickeys", SSHPublicKeyViewSet)
 
 # for view in map(__module__.__dict__.get, __all__):
 #     LOGGER.debug('registering view: %s', view)
