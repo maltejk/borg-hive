@@ -44,7 +44,7 @@ services:
     restart: 'on-failure'
 
   borg:
-    image: ghcr.io/maltejk/borg-hive:borg-${VERSION:-latest}
+    image: ghcr.io/maltejk/borg-hive:${VERSION:-latest}-borg
     depends_on:
       - db
     env_file:
