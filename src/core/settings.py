@@ -171,8 +171,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = '/staticfiles'
 STATICFILES_DIRS = [
-    'src/static',
-    'src/borghive/static'
+    'static',
+    'borghive/static'
 ]
 
 #
@@ -223,11 +223,21 @@ LOGGING = {
             'propagate': True,
             'level': env('APP_LOG_LEVEL', 'DEBUG')
         },
+        'borghive.management.commands.authorized_keys_check': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': env('AUTHORIZED_KEYS_CHECK_LOG_LEVEL', 'DEBUG')
+        },
+        'borghive.management.commands.watch_repositories': {
+            'handlers': ['console'],
+            'propagate': True,
+            'level': env('WATCHER_LOG_LEVEL', 'DEBUG')
+        },     
         'rules': {
             'handlers': ['console'],
             'propagate': True,
             'level': env('DJANGO_LOG_LEVEL', 'DEBUG')
-        },
+        },   
     },
 }
 
