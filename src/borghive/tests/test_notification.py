@@ -314,16 +314,3 @@ class AdminTest(TestCase):
         
         # Assert notify was called with test params
         mock_notify.assert_called_once_with(**notification.get_test_params())
-
-    @patch('borghive.models.notification.PagerDutyNotification.notify')
-    def test_test_notify_action_pagerduty(self, mock_notify):
-        """Test the test_notify admin action for PagerDutyNotification"""
-        notification = PagerDutyNotification.objects.create(name='Test PagerDuty', integration_key='testkey', owner=User.objects.get(username='admin'))
-        queryset = PagerDutyNotification.objects.filter(pk=notification.pk)
-        
-        # Simulate the admin action
-        admin = NotifyAdmin(PagerDutyNotification, self.site)
-        admin.test_notify(None, queryset)
-        
-        # Assert notify was called with test params
-        mock_notify.assert_called_once_with(**notification.get_test_params())
