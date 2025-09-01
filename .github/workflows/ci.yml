@@ -49,7 +49,7 @@ jobs:
   
     - name: Run pylama linting
       run: |
-        pylama --concurrent src
+        pylama src
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
