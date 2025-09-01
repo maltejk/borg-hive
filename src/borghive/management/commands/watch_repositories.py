@@ -8,15 +8,13 @@ from django import db
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
 
-# used for singal activation
+# used for signal activation
 import borghive.signals  # pylint: disable=unused-import
 from borghive.models.repository import Repository, RepositoryEvent
 
 LOGGER = logging.getLogger(__name__)
-LOGGER.setLevel(logging.DEBUG)
 
 # pylint: disable=too-many-nested-blocks
-
 
 class Command(BaseCommand):
     '''
