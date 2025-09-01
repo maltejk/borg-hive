@@ -181,10 +181,10 @@ class NotificationTestView(View, SingleObjectMixin):
             return render(
                 self.request, "borghive/notification_test.html", {"message": message}
             )
+
+        # Redirect with message for non-modal requests
+        if "Sent" in message:
+            messages.add_message(self.request, messages.SUCCESS, message)
         else:
-            # Redirect with message for non-modal requests
-            if "Sent" in message:
-                messages.add_message(self.request, messages.SUCCESS, message)
-            else:
-                messages.add_message(self.request, messages.ERROR, message)
-            return redirect(reverse("notification-list"))
+            messages.add_message(self.request, messages.ERROR, message)
+        return redirect(reverse("notification-list"))

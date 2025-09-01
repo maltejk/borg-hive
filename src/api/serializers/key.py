@@ -6,6 +6,7 @@ from api.serializers.user import SimpleGroupSerializer, SimpleOwnerSerializer
 from borghive.models import SSHPublicKey
 
 
+# pylint: disable=too-few-public-methods,too-many-ancestors
 class SSHPublickeySerializer(SimpleHyperlinkedModelSerializer):
     """
     serializer for ssh public key

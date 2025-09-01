@@ -14,6 +14,7 @@ from borghive.models import (
 from borghive.models.key import SSHPublicKey
 
 
+# pylint: disable=too-few-public-methods,too-many-ancestors
 class RepositorySerializer(SimpleHyperlinkedModelSerializer):
     """
     serializer for repository
@@ -35,7 +36,9 @@ class RepositorySerializer(SimpleHyperlinkedModelSerializer):
         model=RepositoryLocation, fields="__all__", read_only=True
     )
     location_id = serializers.PrimaryKeyRelatedField(
-        source="location", queryset=RepositoryLocation.objects.all(), write_only=True
+        source="location",
+        queryset=RepositoryLocation.objects.all(),  # pylint: disable=no-member
+        write_only=True,
     )
 
     repo_user = SimpleHyperlinkedModelSerializer(
@@ -72,17 +75,20 @@ class RepositorySerializer(SimpleHyperlinkedModelSerializer):
         print(validated_data["owner"])
         return super().create(validated_data, *args, **kwargs)
 
+    # pylint: disable=too-few-public-methods
     class Meta:
         model = Repository
         exclude = ["last_updated", "last_access"]
 
 
+# pylint: disable=too-many-ancestors
 class SimpleRepositorySerializer(SimpleHyperlinkedModelSerializer):
     """
     show only limited fields on repository
     """
 
 
+# pylint: disable=too-many-ancestors
 class RepositoryEventSerializer(SimpleHyperlinkedModelSerializer):
     """
     serializer for repository event
@@ -90,11 +96,13 @@ class RepositoryEventSerializer(SimpleHyperlinkedModelSerializer):
 
     repo = RepositorySerializer(read_only=True)
 
+    # pylint: disable=too-few-public-methods
     class Meta:
         model = RepositoryEvent
         fields = "__all__"
 
 
+# pylint: disable=too-many-ancestors
 class RepositoryStatisticSerializer(SimpleHyperlinkedModelSerializer):
     """
     serializer for repository event

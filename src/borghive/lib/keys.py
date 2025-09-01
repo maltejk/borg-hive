@@ -11,7 +11,7 @@ def get_ssh_host_key_infos():
     """
     get fingerprints of ssh host keys
     """
-    KEY_TYPES = ["rsa", "ecdsa", "ed25519"]
+    KEY_TYPES = ["rsa", "ecdsa", "ed25519"]  # pylint: disable=invalid-name
 
     data = {}
     for key_type in KEY_TYPES:

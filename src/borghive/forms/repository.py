@@ -2,6 +2,7 @@ from borghive.forms.base import BaseForm
 from borghive.models import Repository
 
 
+# pylint: disable=too-few-public-methods
 class RepositoryForm(BaseForm):
     """
     form to create repository
