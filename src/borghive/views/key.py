@@ -16,7 +16,7 @@ class SSHPublicKeyListView(OwnerFilterMixin, ListView):
     """ssh public key list"""
 
     model = SSHPublicKey
-    template_name = 'borghive/key_list.html'
+    template_name = "borghive/key_list.html"
 
 
 class SSHPublicKeyDetailView(OwnerFilterMixin, DetailView):
@@ -29,31 +29,32 @@ class SSHPublicKeyDeleteView(OwnerFilterMixin, DeleteView):
     """ssh public key delete"""
 
     model = SSHPublicKey
-    success_url = reverse_lazy('key-list')
-    template_name = 'borghive/key_delete.html'
+    success_url = reverse_lazy("key-list")
+    template_name = "borghive/key_delete.html"
 
 
 class SSHPublicKeyUpdateView(OwnerFilterMixin, UpdateView):
     """ssh public key update - handle parse errors"""
 
     model = SSHPublicKey
-    success_url = reverse_lazy('key-list')
+    success_url = reverse_lazy("key-list")
     form_class = SSHPublicKeyForm
-    template_name = 'borghive/key_update.html'
+    template_name = "borghive/key_update.html"
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        messages.add_message(self.request, messages.SUCCESS,
-                             f'Updated SSH-Key: {form.instance.name}')
+        messages.add_message(
+            self.request, messages.SUCCESS, f"Updated SSH-Key: {form.instance.name}"
+        )
         return super().form_valid(form)
 
     def form_invalid(self, form):
         for field in form._errors:
-            message = ''
+            message = ""
             for msg in form._errors[field]:
-                message += '<p>' + msg + '</p>'
+                message += "<p>" + msg + "</p>"
             messages.add_message(self.request, messages.ERROR, message)
-        return redirect(reverse('key-list'))
+        return redirect(reverse("key-list"))
 
 
 class SSHPublicKeyCreateView(OwnerFilterMixin, CreateView):
@@ -61,21 +62,22 @@ class SSHPublicKeyCreateView(OwnerFilterMixin, CreateView):
 
     model = SSHPublicKey
     form_class = SSHPublicKeyForm
-    template_name = 'borghive/key_create.html'
+    template_name = "borghive/key_create.html"
 
     def get_success_url(self):
-        return reverse('key-list')
+        return reverse("key-list")
 
     def form_valid(self, form):
         form.instance.owner = self.request.user
-        messages.add_message(self.request, messages.SUCCESS,
-                             f'Added SSH-Key: {form.instance.name}')
+        messages.add_message(
+            self.request, messages.SUCCESS, f"Added SSH-Key: {form.instance.name}"
+        )
         return super().form_valid(form)
 
     def form_invalid(self, form):
         for field in form._errors:
-            message = ''
+            message = ""
             for msg in form._errors[field]:
-                message += '<p>' + msg + '</p>'
+                message += "<p>" + msg + "</p>"
             messages.add_message(self.request, messages.ERROR, message)
-        return redirect(reverse('key-list'))
+        return redirect(reverse("key-list"))

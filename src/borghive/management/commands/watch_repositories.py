@@ -16,36 +16,37 @@ LOGGER = logging.getLogger(__name__)
 
 # pylint: disable=too-many-nested-blocks
 
+
 class Command(BaseCommand):
-    '''
+    """
     django management command to watch borg repository changes on fs with inotify
-    '''
-    help = 'Watch Repositories for changes'
+    """
+
+    help = "Watch Repositories for changes"
 
     def add_arguments(self, parser):
         """arguments parser"""
-        parser.add_argument('--repo-path', type=str, default='/repos')
+        parser.add_argument("--repo-path", type=str, default="/repos")
 
     def get_repo_by_path(self, path):  # pylint: disable=no-self-use
         """distill repo name from inotify path"""
-        repo_name = path.split('/')[-1]
-        repo_user = path.split('/')[-2]
+        repo_name = path.split("/")[-1]
+        repo_user = path.split("/")[-2]
         db.close_old_connections()
-        repo = Repository.objects.get(
-            name=repo_name, repo_user__name=repo_user)
-        LOGGER.debug('get_repo_by_path: %s', repo)
+        repo = Repository.objects.get(name=repo_name, repo_user__name=repo_user)
+        LOGGER.debug("get_repo_by_path: %s", repo)
         return repo
 
     def handle(self, *args, **options):
-        '''
+        """
         install inotify watcher for repository directory
         this can generate a large amount of events when there are many or large repositories.
-        '''
+        """
 
-        if not os.path.isdir(options['repo_path']):
+        if not os.path.isdir(options["repo_path"]):
             raise CommandError(f'Repo path: {options["repo_path"]} not found')
 
-        i = inotify.adapters.InotifyTree(options['repo_path'])
+        i = inotify.adapters.InotifyTree(options["repo_path"])
 
         while True and not settings.TEST_MODE:  # noqa
             try:
@@ -54,57 +55,84 @@ class Command(BaseCommand):
                     try:
                         (_, type_names, path, filename) = event
 
-                        LOGGER.debug("PATH=[%s] FILENAME=[%s] EVENT_TYPES=%s", path, filename, type_names)
+                        LOGGER.debug(
+                            "PATH=[%s] FILENAME=[%s] EVENT_TYPES=%s",
+                            path,
+                            filename,
+                            type_names,
+                        )
 
                         # Event handling
-                        if filename == 'lock.roster':
-                            LOGGER.info('lock detected: repo access')
+                        if filename == "lock.roster":
+                            LOGGER.info("lock detected: repo access")
 
                             repo = self.get_repo_by_path(path)
 
                             # repo open
-                            if 'IN_CREATE' in type_names:
-                                LOGGER.info('lock created: repo open: %s', repo)
+                            if "IN_CREATE" in type_names:
+                                LOGGER.info("lock created: repo open: %s", repo)
 
                                 log_event = RepositoryEvent(
-                                    event_type='watcher', message='Repository open', repo=repo)
+                                    event_type="watcher",
+                                    message="Repository open",
+                                    repo=repo,
+                                )
                                 log_event.save()
 
                             # repo close
-                            if 'IN_DELETE' in type_names:
-                                LOGGER.info('lock deleted: repo close: %s', repo)
+                            if "IN_DELETE" in type_names:
+                                LOGGER.info("lock deleted: repo close: %s", repo)
                                 log_event = RepositoryEvent(
-                                    event_type='watcher', message='Repository closed', repo=repo)
+                                    event_type="watcher",
+                                    message="Repository closed",
+                                    repo=repo,
+                                )
                                 log_event.save()
 
                         # repo created
-                        if filename == 'README' and 'IN_CREATE' in type_names:
+                        if filename == "README" and "IN_CREATE" in type_names:
                             repo = self.get_repo_by_path(path)
                             LOGGER.info(
-                                'repo created: readme created - indicates repo creation: %s', repo)
+                                "repo created: readme created - indicates repo creation: %s",
+                                repo,
+                            )
 
                             log_event = RepositoryEvent(
-                                event_type='watcher', message='Repository created', repo=repo)
+                                event_type="watcher",
+                                message="Repository created",
+                                repo=repo,
+                            )
                             log_event.save()
 
                         # repo updated: there is no clear indicator what is done
-                        if filename.startswith('index.') and 'IN_MOVED_TO' in type_names:
+                        if (
+                            filename.startswith("index.")
+                            and "IN_MOVED_TO" in type_names
+                        ):
                             repo = self.get_repo_by_path(path)
-                            LOGGER.info('repo updated: %s', repo)
+                            LOGGER.info("repo updated: %s", repo)
 
                             log_event = RepositoryEvent(
-                                event_type='watcher', message='Repository updated', repo=repo)
+                                event_type="watcher",
+                                message="Repository updated",
+                                repo=repo,
+                            )
                             log_event.save()
 
-                        if 'IN_DELETE_SELF' in type_names:
-                            is_repo_path = len(path.replace(
-                                options['repo_path'], '').split('/')) == 2
+                        if "IN_DELETE_SELF" in type_names:
+                            is_repo_path = (
+                                len(path.replace(options["repo_path"], "").split("/"))
+                                == 2
+                            )
                             if is_repo_path:
                                 repo = self.get_repo_by_path(path)
-                                LOGGER.info('repo deleted: %s', repo)
+                                LOGGER.info("repo deleted: %s", repo)
 
                                 log_event = RepositoryEvent(
-                                    event_type='watcher', message='Repository deleted', repo=repo)
+                                    event_type="watcher",
+                                    message="Repository deleted",
+                                    repo=repo,
+                                )
                                 log_event.save()
 
                     except Exception as exc:  # pylint: disable=broad-except

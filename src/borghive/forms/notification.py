@@ -9,7 +9,10 @@ class EmailNotificationForm(BaseForm):
 
     class Meta:
         model = EmailNotification
-        fields = ('email', 'group',)
+        fields = (
+            "email",
+            "group",
+        )
 
 
 class PushoverNotificationForm(BaseForm):
@@ -19,4 +22,9 @@ class PushoverNotificationForm(BaseForm):
 
     class Meta:
         model = PushoverNotification
-        fields = ('name', 'user', 'token', 'group',)
+        fields = (
+            "name",
+            "user",
+            "token",
+            "group",
+        )

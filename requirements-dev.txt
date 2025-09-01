@@ -5,3 +5,4 @@ pylint-django
 pylint-plugin-utils
 coverage
 pip-tools
+black

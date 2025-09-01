@@ -12,26 +12,28 @@ class RepositoryLdapUser(ldapdb.models.Model):
     # pylint: disable=signature-differs
 
     # LDAP meta-data
-    base_dn = settings.BORGHIVE['LDAP_USER_BASEDN']
-    object_classes = ['organizationalPerson', 'posixAccount', 'shadowAccount']
+    base_dn = settings.BORGHIVE["LDAP_USER_BASEDN"]
+    object_classes = ["organizationalPerson", "posixAccount", "shadowAccount"]
 
-    last_modified = fields.DateTimeField(db_column='modifyTimestamp')
+    last_modified = fields.DateTimeField(db_column="modifyTimestamp")
 
     # posixAccount
-    uid = fields.IntegerField(db_column='uidNumber', unique=True)
-    group = fields.IntegerField(db_column='gidNumber')
-    gecos = fields.CharField(db_column='gecos', default='Borghive Repo User')
-    home = fields.CharField(db_column='homeDirectory', default=settings.BORGHIVE['REPO_PATH'])
-    shell = fields.CharField(db_column='loginShell', default='/bin/bash')
-    username = fields.CharField(db_column='uid', primary_key=True)
-    sn = fields.CharField(db_column='sn', default='')
-    cn = fields.CharField(db_column='cn', default='')
+    uid = fields.IntegerField(db_column="uidNumber", unique=True)
+    group = fields.IntegerField(db_column="gidNumber")
+    gecos = fields.CharField(db_column="gecos", default="Borghive Repo User")
+    home = fields.CharField(
+        db_column="homeDirectory", default=settings.BORGHIVE["REPO_PATH"]
+    )
+    shell = fields.CharField(db_column="loginShell", default="/bin/bash")
+    username = fields.CharField(db_column="uid", primary_key=True)
+    sn = fields.CharField(db_column="sn", default="")
+    cn = fields.CharField(db_column="cn", default="")
 
     def save(self, *args, **kwargs):
-        self.home = os.path.join(settings.BORGHIVE['REPO_PATH'], self.username)
+        self.home = os.path.join(settings.BORGHIVE["REPO_PATH"], self.username)
         self.sn = self.username
         self.cn = self.username
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'RepositoryLdapUser: {self.dn}: uid={self.uid} gid={self.group}'
+        return f"RepositoryLdapUser: {self.dn}: uid={self.uid} gid={self.group}"
