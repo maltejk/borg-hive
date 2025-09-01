@@ -43,16 +43,18 @@ jobs:
       run: |
         coverage run src/manage.py test src
 
-    - name: Run pylama linting
-      continue-on-error: true  # Allow this step to fail without stopping the job
+    - name: Run black check
       run: |
-        pylama src
+        black src --check
+  
+    - name: Run pylama linting
+      run: |
+        pylama --concurrent src
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./.coverage
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false
