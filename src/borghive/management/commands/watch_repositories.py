@@ -59,7 +59,7 @@ class Command(BaseCommand):
                         LOGGER.debug("PATH=[%s] FILENAME=[%s] EVENT_TYPES=%s", path, filename, type_names)
 
                         # Event handling
-                        if filename == 'lock.exclusive':
+                        if filename == 'lock.roster':
                             LOGGER.info('lock detected: repo access')
 
                             repo = self.get_repo_by_path(path)
@@ -111,6 +111,6 @@ class Command(BaseCommand):
 
                     except Exception as exc:  # pylint: disable=broad-except
                         LOGGER.exception(exc)
-            except InotifyError as exc:
+            except Exception as exc:  # pylint: disable=broad-except
                 LOGGER.exception(exc)
                 sys.exit(255)
