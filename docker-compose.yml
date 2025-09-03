@@ -23,7 +23,7 @@ services:
 
   worker:
     image: ghcr.io/maltejk/borg-hive:${VERSION:-latest}
-    entrypoint: celery -A core worker -l INFO -B --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A core worker -l INFO -B --scheduler django_celery_beat.schedulers:DatabaseScheduler
     env_file:
       - .env
     volumes:
@@ -34,7 +34,7 @@ services:
 
   watcher:
     image: ghcr.io/maltejk/borg-hive:${VERSION:-latest}
-    entrypoint: /bin/bash -c "/app/manage.py watch_repositories"
+    command: ./manage.py watch_repositories
     env_file:
       - .env
     volumes:
