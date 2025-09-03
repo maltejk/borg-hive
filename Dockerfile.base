@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 SHELL ["/bin/bash", "-c"]
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y libmariadb-dev mariadb-client libsasl2-dev libldap2-dev libssl-dev git pkg-config build-essential; \
+    apt-get install -y libmariadb-dev mariadb-client libsasl2-dev libldap2-dev libssl-dev git pkg-config build-essential libpcre3-dev mime-support; \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt /app/
@@ -32,7 +32,7 @@ FROM python:3.12-slim-bookworm AS final
 SHELL ["/bin/bash", "-c"]
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y mariadb-client git; \
+    apt-get install -y mariadb-client git mime-support; \
     rm -rf /var/lib/apt/lists/*
 
 SHELL ["/bin/bash", "-c"]
