@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+# If arguments are provided, exec the command
+if [ $# -gt 0 ]; then
+  echo "Starting with command line $@"
+  source .venv/bin/activate  
+  exec "$@"
+fi
+
 cat << "EOF"
   ____                    _    _ _
  |  _ \                  | |  | (_)
@@ -20,6 +27,8 @@ echo "DEBUG:     ${DEBUG}"
 echo "MIGRATE:   ${MIGRATE}"
 echo "FIXTURES:  ${FIXTURES}"
 echo ""
+
+source .venv/bin/activate
 
 #
 # STATIC FILES
