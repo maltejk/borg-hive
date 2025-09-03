@@ -120,3 +120,4 @@ __pycache__
 helm/charts
 
 .devcontainer/.data
+.DS_Store
