@@ -87,25 +87,35 @@ class Command(BaseCommand):
         """Handle lock file events (repo open/close)."""
         if "IN_CREATE" in type_names:
             LOGGER.info("lock created: repo open: %s", repo)
-            RepositoryEvent(event_type="watcher", message="Repository open", repo=repo).save()
+            RepositoryEvent(
+                event_type="watcher", message="Repository open", repo=repo
+            ).save()
         elif "IN_DELETE" in type_names:
             LOGGER.info("lock deleted: repo close: %s", repo)
-            RepositoryEvent(event_type="watcher", message="Repository closed", repo=repo).save()
+            RepositoryEvent(
+                event_type="watcher", message="Repository closed", repo=repo
+            ).save()
 
     def _handle_create_event(self, repo):
         """Handle repo creation event."""
         LOGGER.info("repo created: readme created - indicates repo creation: %s", repo)
-        RepositoryEvent(event_type="watcher", message="Repository created", repo=repo).save()
+        RepositoryEvent(
+            event_type="watcher", message="Repository created", repo=repo
+        ).save()
 
     def _handle_update_event(self, repo):
         """Handle repo update event."""
         LOGGER.info("repo updated: %s", repo)
-        RepositoryEvent(event_type="watcher", message="Repository updated", repo=repo).save()
+        RepositoryEvent(
+            event_type="watcher", message="Repository updated", repo=repo
+        ).save()
 
     def _handle_delete_event(self, repo):
         """Handle repo deletion event."""
         LOGGER.info("repo deleted: %s", repo)
-        RepositoryEvent(event_type="watcher", message="Repository deleted", repo=repo).save()
+        RepositoryEvent(
+            event_type="watcher", message="Repository deleted", repo=repo
+        ).save()
 
     def _is_repo_path(self, path, repo_path):
         """Check if the path is a repository path."""
