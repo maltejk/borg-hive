@@ -136,6 +136,9 @@ class Command(BaseCommand):
 
                     except Exception as exc:  # pylint: disable=broad-except
                         LOGGER.exception(exc)
+            except PermissionError as exc:
+                LOGGER.info("Ignoring PermissionError: %s", exc)
+                pass
             except Exception as exc:  # pylint: disable=broad-except
                 LOGGER.exception(exc)
                 sys.exit(255)
