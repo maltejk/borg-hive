@@ -50,95 +50,63 @@ class Command(BaseCommand):
         while True and not settings.TEST_MODE:  # noqa
             try:
                 for event in i.event_gen(yield_nones=False):
-
-                    try:
-                        (_, type_names, path, filename) = event
-
-                        LOGGER.debug(
-                            "PATH=[%s] FILENAME=[%s] EVENT_TYPES=%s",
-                            path,
-                            filename,
-                            type_names,
-                        )
-
-                        # Event handling
-                        if filename == "lock.roster":
-                            LOGGER.info("lock detected: repo access")
-
-                            repo = self.get_repo_by_path(path)
-
-                            # repo open
-                            if "IN_CREATE" in type_names:
-                                LOGGER.info("lock created: repo open: %s", repo)
-
-                                log_event = RepositoryEvent(
-                                    event_type="watcher",
-                                    message="Repository open",
-                                    repo=repo,
-                                )
-                                log_event.save()
-
-                            # repo close
-                            if "IN_DELETE" in type_names:
-                                LOGGER.info("lock deleted: repo close: %s", repo)
-                                log_event = RepositoryEvent(
-                                    event_type="watcher",
-                                    message="Repository closed",
-                                    repo=repo,
-                                )
-                                log_event.save()
-
-                        # repo created
-                        if filename == "README" and "IN_CREATE" in type_names:
-                            repo = self.get_repo_by_path(path)
-                            LOGGER.info(
-                                "repo created: readme created - indicates repo creation: %s",
-                                repo,
-                            )
-
-                            log_event = RepositoryEvent(
-                                event_type="watcher",
-                                message="Repository created",
-                                repo=repo,
-                            )
-                            log_event.save()
-
-                        # repo updated: there is no clear indicator what is done
-                        if (
-                            filename.startswith("index.")
-                            and "IN_MOVED_TO" in type_names
-                        ):
-                            repo = self.get_repo_by_path(path)
-                            LOGGER.info("repo updated: %s", repo)
-
-                            log_event = RepositoryEvent(
-                                event_type="watcher",
-                                message="Repository updated",
-                                repo=repo,
-                            )
-                            log_event.save()
-
-                        if "IN_DELETE_SELF" in type_names:
-                            is_repo_path = (
-                                len(path.replace(options["repo_path"], "").split("/"))
-                                == 2
-                            )
-                            if is_repo_path:
-                                repo = self.get_repo_by_path(path)
-                                LOGGER.info("repo deleted: %s", repo)
-
-                                log_event = RepositoryEvent(
-                                    event_type="watcher",
-                                    message="Repository deleted",
-                                    repo=repo,
-                                )
-                                log_event.save()
-
-                    except Exception as exc:  # pylint: disable=broad-except
-                        LOGGER.exception(exc)
+                    self._process_event(event, options["repo_path"])
             except PermissionError as exc:
                 LOGGER.info("Ignoring PermissionError: %s", exc)
-                pass
             except Exception as exc:  # pylint: disable=broad-except
                 LOGGER.exception(exc)
                 sys.exit(255)
+
+    def _process_event(self, event, repo_path):
+        """Process a single inotify event."""
+        try:
+            (_, type_names, path, filename) = event
+
+            LOGGER.debug(
+                "PATH=[%s] FILENAME=[%s] EVENT_TYPES=%s",
+                path,
+                filename,
+                type_names,
+            )
+
+            repo = self.get_repo_by_path(path)
+
+            if filename == "lock.roster":
+                self._handle_lock_event(repo, type_names)
+            elif filename == "README" and "IN_CREATE" in type_names:
+                self._handle_create_event(repo)
+            elif filename.startswith("index.") and "IN_MOVED_TO" in type_names:
+                self._handle_update_event(repo)
+            elif "IN_DELETE_SELF" in type_names and self._is_repo_path(path, repo_path):
+                self._handle_delete_event(repo)
+
+        except Exception as exc:  # pylint: disable=broad-except
+            LOGGER.exception(exc)
+
+    def _handle_lock_event(self, repo, type_names):
+        """Handle lock file events (repo open/close)."""
+        if "IN_CREATE" in type_names:
+            LOGGER.info("lock created: repo open: %s", repo)
+            RepositoryEvent(event_type="watcher", message="Repository open", repo=repo).save()
+        elif "IN_DELETE" in type_names:
+            LOGGER.info("lock deleted: repo close: %s", repo)
+            RepositoryEvent(event_type="watcher", message="Repository closed", repo=repo).save()
+
+    def _handle_create_event(self, repo):
+        """Handle repo creation event."""
+        LOGGER.info("repo created: readme created - indicates repo creation: %s", repo)
+        RepositoryEvent(event_type="watcher", message="Repository created", repo=repo).save()
+
+    def _handle_update_event(self, repo):
+        """Handle repo update event."""
+        LOGGER.info("repo updated: %s", repo)
+        RepositoryEvent(event_type="watcher", message="Repository updated", repo=repo).save()
+
+    def _handle_delete_event(self, repo):
+        """Handle repo deletion event."""
+        LOGGER.info("repo deleted: %s", repo)
+        RepositoryEvent(event_type="watcher", message="Repository deleted", repo=repo).save()
+
+    def _is_repo_path(self, path, repo_path):
+        """Check if the path is a repository path."""
+        return len(path.replace(repo_path, "").split("/")) == 2
