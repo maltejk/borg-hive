@@ -1,5 +1,7 @@
 import logging
 
+import os
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from borghive.models import RepositoryUser, RepositoryMode
@@ -43,7 +45,9 @@ class Command(BaseCommand):
                 elif user.repository.mode == RepositoryMode.EXPORT:
                     command_options.append("-ro")
 
-                command_options.append(user.repository.get_repo_path())
+                command_options.append(
+                    os.path.join(settings.BORGHIVE["REPO_PATH"], user.name)
+                )
 
                 authorized_keys_line = (
                     KEY_CMD_PREFIX
