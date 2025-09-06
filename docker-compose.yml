@@ -15,7 +15,6 @@ services:
     volumes:
       - borg-config:/config
       - borg-repos:/repos
-      - static:/staticfiles
     ports:
       - "8000:8000"
     depends_on:
@@ -86,7 +85,6 @@ volumes:
   ldap-config:
   ldap-backup:
   borg-config:
-  static:
   borg-repos:
 
 #
