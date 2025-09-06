@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.12-slim-trixie
 
 LABEL org.opencontainers.image.authors="malte@maltejk.de"
 LABEL org.opencontainers.image.source="https://github.com/maltejk/borg-hive"
@@ -9,9 +9,9 @@ ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
-RUN apt-get install -y acl libldap2-dev libmariadb-dev mariadb-client python3-pip libsasl2-dev libssl-dev \
-                       python3-pip openssh-server sshfs python3-dev libldap2-dev libssl-dev libpam-ldapd netcat-traditional \
-                       rsync git python3-dev libssl-dev openssl libacl1-dev libacl1 build-essential pkg-config
+RUN apt-get install -y acl libldap2-dev libmariadb-dev mariadb-client libsasl2-dev libssl-dev \
+                       openssh-server sshfs libldap2-dev libssl-dev libpam-ldapd netcat-traditional \
+                       rsync git libssl-dev openssl libacl1-dev libacl1 build-essential pkg-config
 
 RUN useradd -m -s /bin/bash devcontainer
 
