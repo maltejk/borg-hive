@@ -38,8 +38,8 @@ EOF
 # start nslcd
 nslcd
 
-# save current environment to profile - needed by AuthorizedKeysCommand of sshd
-env > /etc/profile.d/borg.sh
+# save MYSQL environment to profile - needed by AuthorizedKeysCommand of sshd
+env | grep MYSQL > /etc/profile.d/borg.sh
 chmod +rx /etc/profile.d/borg.sh
 
 # -D in CMD below prevents sshd from becoming a daemon. -e is to log everything to stderr.
