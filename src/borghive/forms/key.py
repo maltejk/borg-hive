@@ -1,8 +1,8 @@
-
 from borghive.forms.base import BaseForm
 from borghive.models import SSHPublicKey
 
 
+# pylint: disable=too-few-public-methods
 class SSHPublicKeyForm(BaseForm):
     """
     form to create an ssh public key
@@ -10,8 +10,14 @@ class SSHPublicKeyForm(BaseForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['public_key'].widget.attrs['placeholder'] = 'ssh-rsa AAAA... comment'
+        self.fields["public_key"].widget.attrs[
+            "placeholder"
+        ] = "ssh-rsa AAAA... comment"
 
     class Meta:
         model = SSHPublicKey
-        fields = ('public_key', 'name', 'group',)
+        fields = (
+            "public_key",
+            "name",
+            "group",
+        )

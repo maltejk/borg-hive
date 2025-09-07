@@ -5,7 +5,7 @@ from django.contrib import admin
 class BorgHiveConfig(AppConfig):
     """borghive app config"""
 
-    name = 'borghive'
+    name = "borghive"
 
     def ready(self):
         """initialize borghive config"""

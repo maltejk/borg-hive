@@ -7,10 +7,12 @@ class OwnerOrGroupManager(models.Manager):
     model manager for filtering by owner or group
     """
 
-    # pylint: disable=R0903
+    # pylint: disable=too-few-public-methods
 
     def by_owner_or_group(self, user):
         """
         use Django Q to filter by owner or group of user
         """
-        return self.get_queryset().filter(Q(owner=user) | Q(group__in=user.groups.all()))
+        return self.get_queryset().filter(
+            Q(owner=user) | Q(group__in=user.groups.all())
+        )

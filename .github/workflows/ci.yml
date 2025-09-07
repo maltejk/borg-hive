@@ -13,15 +13,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Python 3.10
+    - name: Set up Python 3.12
       uses: actions/setup-python@v4
       with:
-        python-version: 3.10.18
+        python-version: 3.12.11
 
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libmariadb-dev mariadb-client libsasl2-dev python3-dev libldap2-dev libssl-dev
+        sudo apt-get install -y libmariadb-dev libsasl2-dev libldap2-dev libssl-dev
 
     - name: Cache pip
       uses: actions/cache@v3
@@ -43,8 +43,11 @@ jobs:
       run: |
         coverage run src/manage.py test src
 
+    - name: Run black check
+      run: |
+        black src --check
+  
     - name: Run pylama linting
-      continue-on-error: true  # Allow this step to fail without stopping the job
       run: |
         pylama src
 
@@ -52,7 +55,6 @@ jobs:
       uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        file: ./.coverage
         flags: unittests
         name: codecov-umbrella
         fail_ci_if_error: false

@@ -19,7 +19,6 @@ services:
     volumes:
       - .devcontainer/.data/borg-repos:/repos
       - .devcontainer/.data/borg-config:/config
-      - ./src:/app:ro
   db:
     volumes:
       - .devcontainer/.data/mysql:/var/lib/mysql

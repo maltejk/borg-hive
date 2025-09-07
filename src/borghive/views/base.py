@@ -15,19 +15,20 @@ class BaseView(AutoPermissionRequiredMixin, OwnerFilterMixin):
     """
 
     permission_type_map = [
-        (CreateView, 'add'),
-        (UpdateView, 'change'),
-        (DeleteView, 'delete'),
-        (DetailView, 'view'),
-        (ListView, 'list'),
+        (CreateView, "add"),
+        (UpdateView, "change"),
+        (DeleteView, "delete"),
+        (DetailView, "view"),
+        (ListView, "list"),
     ]
 
     def get_form_kwargs(self):
         """add request.user to form kwargs"""
         kwargs = super().get_form_kwargs()
-        kwargs.update({'user': self.request.user})  # pylint: disable=no-member
+        kwargs.update({"user": self.request.user})  # pylint: disable=no-member
         return kwargs
 
     class Meta:
         """meta"""
+
         abstract = True

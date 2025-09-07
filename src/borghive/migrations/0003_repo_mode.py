@@ -7,18 +7,24 @@ import ldapdb.models.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('borghive', '0002_append_only'),
+        ("borghive", "0002_append_only"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='repository',
-            name='mode',
-            field=models.CharField(choices=[('BORG', 'Borg'), ('IMPORT', 'Import'), ('EXPORT', 'Export')], default='BORG', max_length=6),
+            model_name="repository",
+            name="mode",
+            field=models.CharField(
+                choices=[("BORG", "Borg"), ("IMPORT", "Import"), ("EXPORT", "Export")],
+                default="BORG",
+                max_length=6,
+            ),
         ),
         migrations.AlterField(
-            model_name='repository',
-            name='append_only_keys',
-            field=models.ManyToManyField(blank=True, related_name='append_only_keys', to='borghive.SSHPublicKey'),
-        )
+            model_name="repository",
+            name="append_only_keys",
+            field=models.ManyToManyField(
+                blank=True, related_name="append_only_keys", to="borghive.SSHPublicKey"
+            ),
+        ),
     ]

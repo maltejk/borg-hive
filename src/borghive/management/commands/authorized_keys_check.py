@@ -1,8 +1,12 @@
 import logging
 
+import os
+from django.conf import settings
 from django.core.management.base import BaseCommand
 
 from borghive.models import RepositoryUser, RepositoryMode
+
+# pylint: disable=no-member
 
 LOGGER = logging.getLogger(__name__)
 
@@ -11,19 +15,22 @@ KEY_CMD_POSTFIX = '",restrict '
 
 
 class Command(BaseCommand):
-    '''
+    """
     django management command to present the ssh-keys from the database
     as authorized_keys format
-    '''
-    help = 'Get Authorized Keys from Database'
+    """
+
+    help = "Get Authorized Keys from Database"
 
     def add_arguments(self, parser):
-        parser.add_argument('--user', type=str)
+        parser.add_argument("--user", type=str)
 
     def handle(self, *args, **options):
 
-        user = RepositoryUser.objects.get(name=options['user'])
-        LOGGER.debug('repo %s@%s has mode: %s', user, user.repository, user.repository.mode)
+        user = RepositoryUser.objects.get(name=options["user"])
+        LOGGER.debug(
+            "repo %s@%s has mode: %s", user, user.repository, user.repository.mode
+        )
 
         # import / export mode
         if user.repository.mode in (RepositoryMode.IMPORT, RepositoryMode.EXPORT):
@@ -31,17 +38,23 @@ class Command(BaseCommand):
             # add rrsync wrapper for import or export
             for key in user.repository.ssh_keys.all():
                 LOGGER.debug(key)
-                command_options = ['/usr/bin/rrsync']
+                command_options = ["/usr/bin/rrsync"]
 
                 if user.repository.mode == RepositoryMode.IMPORT:
-                    command_options.append('-wo')
+                    command_options.append("-wo")
                 elif user.repository.mode == RepositoryMode.EXPORT:
-                    command_options.append('-ro')
+                    command_options.append("-ro")
 
-                command_options.append(user.repository.get_repo_path())
+                command_options.append(
+                    os.path.join(settings.BORGHIVE["REPO_PATH"], user.name)
+                )
 
-                authorized_keys_line = KEY_CMD_PREFIX + \
-                    ' '.join(command_options) + KEY_CMD_POSTFIX + key.public_key
+                authorized_keys_line = (
+                    KEY_CMD_PREFIX
+                    + " ".join(command_options)
+                    + KEY_CMD_POSTFIX
+                    + key.public_key
+                )
                 LOGGER.debug(authorized_keys_line)
 
                 print(authorized_keys_line)
@@ -50,13 +63,19 @@ class Command(BaseCommand):
             # add restrict to repository
             for key in user.repository.ssh_keys.all():
                 LOGGER.debug(key)
-                command_options = ['borg serve --umask 007']
+                command_options = ["borg serve --umask 007"]
 
                 # restrict path
-                command_options.append(f'--restrict-to-repository {user.repository.get_repo_path()}')
+                command_options.append(
+                    f"--restrict-to-repository {user.repository.get_repo_path()}"
+                )
 
-                authorized_keys_line = KEY_CMD_PREFIX + \
-                    ' '.join(command_options) + KEY_CMD_POSTFIX + key.public_key
+                authorized_keys_line = (
+                    KEY_CMD_PREFIX
+                    + " ".join(command_options)
+                    + KEY_CMD_POSTFIX
+                    + key.public_key
+                )
                 LOGGER.debug(authorized_keys_line)
 
                 print(authorized_keys_line)
@@ -66,15 +85,21 @@ class Command(BaseCommand):
                 LOGGER.debug(key)
                 command_options = []
 
-                command_options.append('--append-only')
+                command_options.append("--append-only")
 
                 # restrict path
-                command_options.append(f'--restrict-to-repository {user.repository.get_repo_path()}')
+                command_options.append(
+                    f"--restrict-to-repository {user.repository.get_repo_path()}"
+                )
 
-                authorized_keys_line = KEY_CMD_PREFIX + \
-                    ' '.join(command_options) + KEY_CMD_POSTFIX + key.public_key
+                authorized_keys_line = (
+                    KEY_CMD_PREFIX
+                    + " ".join(command_options)
+                    + KEY_CMD_POSTFIX
+                    + key.public_key
+                )
                 LOGGER.debug(authorized_keys_line)
 
                 print(authorized_keys_line)
         else:
-            LOGGER.error('I dont know which mode: %s', user.repository.mode)
+            LOGGER.error("I dont know which mode: %s", user.repository.mode)

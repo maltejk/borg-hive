@@ -7,14 +7,14 @@ import ldapdb.models.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('borghive', '0003_repo_mode'),
+        ("borghive", "0003_repo_mode"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='repositorystatistic',
-            name='repo_size_unit',
-            field=models.CharField(default='MB', max_length=3),
+            model_name="repositorystatistic",
+            name="repo_size_unit",
+            field=models.CharField(default="MB", max_length=3),
             preserve_default=False,
         )
     ]
