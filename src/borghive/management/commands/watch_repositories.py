@@ -29,8 +29,11 @@ class Command(BaseCommand):
 
     def get_repo_by_path(self, path):
         """distill repo name from inotify path"""
-        repo_name = path.split("/")[-1]
-        repo_user = path.split("/")[-2]
+        parts = path.split("/")
+        if len(parts) < 3:  # Ensure path has at least /repos/repo_user/repo_name
+            raise ValueError(f"Invalid path structure: {path}")
+        repo_name = parts[-1]
+        repo_user = parts[-2]
         db.close_old_connections()
         repo = Repository.objects.get(name=repo_name, repo_user__name=repo_user)
         LOGGER.debug("get_repo_by_path: %s", repo)
@@ -52,7 +55,9 @@ class Command(BaseCommand):
                 for event in i.event_gen(yield_nones=False):
                     self._process_event(event, options["repo_path"])
             except PermissionError as exc:
-                LOGGER.info("Ignoring PermissionError: %s", exc)
+                LOGGER.debug("Ignoring PermissionError: %s", exc)
+            except borghive.models.repository.Repository.DoesNotExist as exc:
+                LOGGER.debug("Ignoring not existing repo: %s", exc)
             except Exception as exc:  # pylint: disable=broad-except
                 LOGGER.exception(exc)
                 sys.exit(255)
@@ -80,6 +85,10 @@ class Command(BaseCommand):
             elif "IN_DELETE_SELF" in type_names and self._is_repo_path(path, repo_path):
                 self._handle_delete_event(repo)
 
+        except borghive.models.repository.Repository.DoesNotExist as exc:
+            LOGGER.debug("Ignoring event for non-existing repository: %s", exc)
+        except ValueError as exc:
+            LOGGER.debug("Ignoring event for invalid path: %s", exc)
         except Exception as exc:  # pylint: disable=broad-except
             LOGGER.exception(exc)
 
