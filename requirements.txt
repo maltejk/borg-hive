@@ -40,17 +40,17 @@ cron-descriptor==1.4.5
     # via django-celery-beat
 cryptography==45.0.6
     # via sshpubkeys
-django==4.2.23
+django==4.2.4
     # via
     #   -r requirements.in
     #   crispy-bootstrap4
     #   django-celery-beat
     #   django-crispy-forms
     #   django-extensions
-    #   django-ldapdb
     #   django-polymorphic
     #   django-timezone-field
     #   djangorestframework
+    #   mprov-django-ldapdb
 django-celery-beat==2.8.1
     # via -r requirements.in
 django-crispy-forms==2.4
@@ -58,8 +58,6 @@ django-crispy-forms==2.4
     #   -r requirements.in
     #   crispy-bootstrap4
 django-extensions==4.1
-    # via -r requirements.in
-django-ldapdb @ git+https://github.com/slyngshede/django-ldapdb@remove_pytz_dependency
     # via -r requirements.in
 django-login-required-middleware==0.9.0
     # via -r requirements.in
@@ -83,6 +81,8 @@ kombu==5.5.4
     # via celery
 marshmallow==4.0.0
     # via environs
+mprov-django-ldapdb==1.5.4
+    # via -r requirements.in
 mysqlclient==2.2.7
     # via -r requirements.in
 packaging==25.0
@@ -108,7 +108,7 @@ python-dateutil==2.9.0.post0
 python-dotenv==1.1.1
     # via environs
 python-ldap==3.4.4
-    # via django-ldapdb
+    # via mprov-django-ldapdb
 pyyaml==6.0.2
     # via -r requirements.in
 redis==6.4.0

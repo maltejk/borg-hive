@@ -3,12 +3,10 @@ django-celery-beat==2.8.1
 django-crispy-forms==2.4
 crispy-bootstrap4==2025.6
 django-extensions==4.1
-#django-ldapdb==1.5.1
-# https://github.com/django-ldapdb/django-ldapdb/pull/209
-git+https://github.com/slyngshede/django-ldapdb@remove_pytz_dependency#egg=django-ldapdb
+mprov-django-ldapdb==1.5.4
 django-login-required-middleware==0.9.0
 django-polymorphic==4.1.0
-django==4.2.23
+django==4.2.4
 djangorestframework-queryfields==1.1.0
 djangorestframework==3.16.1
 environs==14.3.0
