@@ -9,9 +9,9 @@ ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update
-RUN apt-get install -y acl libldap2-dev libmariadb-dev mariadb-client libsasl2-dev libssl-dev \
-                       openssh-server sshfs libldap2-dev libssl-dev libpam-ldapd netcat-traditional \
-                       rsync git libssl-dev openssl libacl1-dev libacl1 build-essential pkg-config
+RUN apt-get install -y acl libacl1-dev libldap2-dev libmariadb-dev mariadb-client \
+                       libsasl2-dev openssh-server libldap2-dev libpam-ldapd rsync git \
+                       libssl-dev openssl build-essential pkg-config
 
 RUN useradd -m -s /bin/bash devcontainer
 
