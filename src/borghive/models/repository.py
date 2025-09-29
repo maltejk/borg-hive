@@ -5,8 +5,8 @@ import os
 import subprocess
 import rules
 
-
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.validators import RegexValidator
 from django.contrib.auth.models import User, Group
 from django.db import models
@@ -153,6 +153,10 @@ class Repository(BaseModel):
     alert_after_days = models.IntegerField(null=True, blank=True)  # days
 
     objects = OwnerOrGroupManager()
+
+    # Define DoesNotExist to make pylint recognize it
+    class DoesNotExist(ObjectDoesNotExist):
+        pass
 
     def __str__(self):
         """representation"""
