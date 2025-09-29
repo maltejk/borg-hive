@@ -4,7 +4,7 @@ What is Borg Hive?
 Borg Hive is a management interface for borgbackup repositories. 
 
 It was initially created by `bpereto <https://github.com/0asys/borg-hive>`_, who stopped to maintain it at some point.
-As I still use it on a daily base, I to continue his valuable work.
+As I still use it on a daily base, I try to continue his valuable work.
 
 Quoting the original README below:
 
