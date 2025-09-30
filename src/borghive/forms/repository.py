@@ -2,6 +2,7 @@ from borghive.forms.base import BaseForm
 from borghive.models import Repository
 
 
+# pylint: disable=too-few-public-methods
 class RepositoryForm(BaseForm):
     """
     form to create repository
@@ -9,4 +10,12 @@ class RepositoryForm(BaseForm):
 
     class Meta:
         model = Repository
-        fields = ('name', 'ssh_keys', 'append_only_keys', 'location', 'alert_after_days', 'group', 'mode')
+        fields = (
+            "name",
+            "ssh_keys",
+            "append_only_keys",
+            "location",
+            "alert_after_days",
+            "group",
+            "mode",
+        )

@@ -1,29 +1,52 @@
-FROM python:3.9-slim
-MAINTAINER bpereto
+FROM python:3.12-slim-trixie AS build
+
+LABEL org.opencontainers.image.authors="malte@maltejk.de"
+LABEL org.opencontainers.image.source="https://github.com/maltejk/borg-hive"
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTE 1
-ENV PYTHONUNBUFFERED 1
-ENV DEBIAN_FRONTEND noninteractive
+ENV PYTHONDONTWRITEBYTE=1
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y libmariadb-dev mariadb-client python3-pip libsasl2-dev python-dev libldap2-dev libssl-dev && rm -rf /var/lib/apt/lists/*
+SHELL ["/bin/bash", "-c"]
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y mariadb-client libmariadb-dev libsasl2-dev libldap2-dev libssl-dev pkg-config \
+                       build-essential libpcre2-dev media-types; \
+    rm -rf /var/lib/apt/lists/*; rm -rf /var/cache/apt/archives/*.deb
 
-RUN mkdir /app /staticfiles && groupadd -g 1000 borg && \
-    useradd -rm -u 1000 -g 1000 borg && chown -R borg:borg /app /staticfiles
-WORKDIR /app
+COPY src /app
 COPY requirements.txt /app/
 
-RUN pip3 install --no-cache -r requirements.txt
+WORKDIR /app
 
-# install uwsgi now because it takes a little while
-RUN pip3 install --no-cache uwsgi
+RUN python3 -m venv .venv
 
-COPY src /app/
+RUN source .venv/bin/activate \
+    && pip3 install --no-cache -r requirements.txt
+
+FROM python:3.12-slim-trixie AS final
+
+SHELL ["/bin/bash", "-c"]
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y libldap2 mariadb-client media-types; \
+    rm -rf /var/lib/apt/lists/*; rm -rf /var/cache/apt/archives/*.deb
+
+SHELL ["/bin/bash", "-c"]
+RUN set -eux; \ 
+    mkdir /staticfiles; \
+    groupadd -g 1000 borg; \
+    useradd -rm -u 1000 -g 1000 borg; \
+    chown -R borg:borg /staticfiles
+
+COPY --from=build /app /app
+
 COPY scripts/init.sh /
 COPY uwsgi.ini /
 
-VOLUME ["/staticfiles"]
-
 USER borg
+
+WORKDIR /app
 
 ENTRYPOINT ["/init.sh"]

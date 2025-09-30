@@ -1,7 +1,6 @@
-version: '3'
 services:
   db:
-    image: mariadb:latest
+    image: mariadb:10.5
     volumes:
       - mariadb-data:/var/lib/mysql
     environment:
@@ -14,7 +13,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.base
-    command: python manage.py runserver 0.0.0.0:8000
+    command: ./manage.py runserver 0.0.0.0:8000
     environment:
       - DEBUG=True
       - MYSQL_HOST=db
@@ -26,7 +25,6 @@ services:
       - .env
       - .dev
     volumes:
-      - ./src:/app
       - borg-config:/config
       - borg-repos:/repos
       - static:/staticfiles
@@ -39,7 +37,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.base
-    entrypoint: celery -A core worker -l DEBUG -B --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A core worker -l DEBUG -B --scheduler django_celery_beat.schedulers:DatabaseScheduler
     environment:
       - DEBUG=True
       - MYSQL_HOST=db
@@ -50,7 +48,6 @@ services:
       - .env
       - .dev
     volumes:
-      - ./src:/app
       - borg-config:/config
       - borg-repos:/repos:ro
     depends_on:
@@ -60,7 +57,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.base
-    entrypoint: /bin/bash -c "/app/manage.py watch_repositories"
+    command: ./manage.py watch_repositories
     environment:
       - APP_LOG_LEVEL=DEBUG
       - MYSQL_HOST=db
@@ -69,7 +66,6 @@ services:
       - MYSQL_PASSWORD=borghive
     restart: 'on-failure'
     volumes:
-      - ./src:/app
       - borg-repos:/repos:ro
     depends_on:
       - db
@@ -93,7 +89,6 @@ services:
     volumes:
       - borg-repos:/repos
       - borg-config:/config
-      - ./src:/app
     ports:
       - "22:22"
 
@@ -112,7 +107,7 @@ services:
       - ldap-backup:/data/backup
 
   redis:
-    image: redis:latest
+    image: redis:6.2.19-bookworm
 
 volumes:
   mariadb-data:

@@ -1,40 +1,50 @@
-FROM python:3.9-slim
-MAINTAINER bpereto
+FROM python:3.12-slim-trixie AS build
+
+LABEL org.opencontainers.image.authors="malte@maltejk.de"
+LABEL org.opencontainers.image.source="https://github.com/maltejk/borg-hive"
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTE 1
-ENV PYTHONUNBUFFERED 1
-ENV DEBIAN_FRONTEND noninteractive
+ENV PYTHONDONTWRITEBYTE=1
+ENV PYTHONUNBUFFERED=1
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install SSH, Mariadb and LDAP Deps
-RUN apt-get update && apt-get install -y libmariadb-dev python3-pip openssh-server sshfs acl libsasl2-dev python-dev libldap2-dev libssl-dev libpam-ldapd netcat rsync && rm -rf /var/lib/apt/lists/*
+SHELL ["/bin/bash", "-c"]
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y build-essential libpam-ldapd libmariadb-dev libsasl2-dev libldap2-dev \
+                       libssl-dev pkg-config openssh-server rsync; \
+    rm -rf /var/lib/apt/lists/*; rm -rf /var/cache/apt/archives/*.deb
 
-# Install dependencies for borgbackup source installation
-RUN apt-get update && apt-get install -y git python3-dev libssl-dev openssl libacl1-dev libacl1 build-essential pkg-config && rm -rf /var/lib/apt/lists/*
-
-RUN mkdir /app
 WORKDIR /app
 COPY requirements.txt /app/
-COPY borg/requirements.txt /app/borg/requirements.txt
-
-# needed for borgbackup
-RUN pip install --no-cache Cython pkgconfig
-RUN pip install --no-cache -r requirements.txt -r borg/requirements.txt
-
+RUN set -eux; \
+    python3 -m venv .venv; \
+    source .venv/bin/activate; \
+    pip install --no-cache -r requirements.txt
 COPY src /app/
 
+FROM python:3.12-slim-trixie AS final
+
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y borgbackup libldap2 libmariadb3 libpam-ldapd nslcd openssh-server rsync; \
+    rm -rf /var/lib/apt/lists/*; rm -rf /var/cache/apt/archives/*.deb
+
+COPY --from=build /app /app
 # Authorized Keys Command needs these settings
 RUN chown root:root /app/manage.py && chmod 755 /app/manage.py
 
-RUN groupadd -g 1000 borg && \
-    useradd -rm -u 1000 -g 1000 borg && \
-    mkdir /repos /run/sshd && \
-    chown -R borg.borg /repos
+RUN set -eux; \
+    groupadd -g 1000 borg; \
+    useradd -rm -u 1000 -g 1000 borg; \
+    mkdir /repos; \
+    chown -R borg:borg /repos
 
 ADD borg/sshd_config /etc/ssh/sshd_config
 ADD borg/pam-sshd.conf /etc/pam.d/sshd
 ADD borg/nsswitch.conf /etc/nsswitch.conf
-ADD borg/rrsync /usr/bin/rrsync
+
 
 ADD borg/init.sh /init.sh
 

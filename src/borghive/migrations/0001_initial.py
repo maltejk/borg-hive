@@ -14,169 +14,378 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('auth', '0011_update_proxy_permissions'),
+        ("contenttypes", "0002_remove_content_type_name"),
+        ("auth", "0011_update_proxy_permissions"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Notification',
+            name="Notification",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('group', models.ManyToManyField(blank=True, to='auth.Group')),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-                ('polymorphic_ctype', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='polymorphic_borghive.notification_set+', to='contenttypes.ContentType')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("group", models.ManyToManyField(blank=True, to="auth.Group")),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "polymorphic_ctype",
+                    models.ForeignKey(
+                        editable=False,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="polymorphic_borghive.notification_set+",
+                        to="contenttypes.ContentType",
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
-                'base_manager_name': 'objects',
+                "abstract": False,
+                "base_manager_name": "objects",
             },
             bases=(rules.contrib.models.RulesModelMixin, models.Model),
         ),
         migrations.CreateModel(
-            name='Repository',
+            name="Repository",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('name', models.CharField(max_length=256, validators=[django.core.validators.RegexValidator(regex='^[\\w\\-\\.]+$')])),
-                ('last_updated', models.DateTimeField(blank=True, null=True)),
-                ('last_access', models.DateTimeField(blank=True, null=True)),
-                ('alert_after_days', models.IntegerField(blank=True, null=True)),
-                ('group', models.ManyToManyField(blank=True, to='auth.Group')),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=256,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                regex="^[\\w\\-\\.]+$"
+                            )
+                        ],
+                    ),
+                ),
+                ("last_updated", models.DateTimeField(blank=True, null=True)),
+                ("last_access", models.DateTimeField(blank=True, null=True)),
+                ("alert_after_days", models.IntegerField(blank=True, null=True)),
+                ("group", models.ManyToManyField(blank=True, to="auth.Group")),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name_plural': 'Repositories',
+                "verbose_name_plural": "Repositories",
             },
             bases=(rules.contrib.models.RulesModelMixin, models.Model),
         ),
         migrations.CreateModel(
-            name='RepositoryLdapUser',
+            name="RepositoryLdapUser",
             fields=[
-                ('last_modified', ldapdb.models.fields.DateTimeField(db_column='modifyTimestamp')),
-                ('dn', ldapdb.models.fields.CharField(max_length=200)),
-                ('uid', ldapdb.models.fields.IntegerField(db_column='uidNumber', unique=True)),
-                ('group', ldapdb.models.fields.IntegerField(db_column='gidNumber')),
-                ('gecos', ldapdb.models.fields.CharField(db_column='gecos', default='Borghive Repo User', max_length=200)),
-                ('home', ldapdb.models.fields.CharField(db_column='homeDirectory', default='/repos', max_length=200)),
-                ('shell', ldapdb.models.fields.CharField(db_column='loginShell', default='/bin/bash', max_length=200)),
-                ('username', ldapdb.models.fields.CharField(db_column='uid', max_length=200, primary_key=True, serialize=False)),
-                ('sn', ldapdb.models.fields.CharField(db_column='sn', default='', max_length=200)),
-                ('cn', ldapdb.models.fields.CharField(db_column='cn', default='', max_length=200)),
+                (
+                    "last_modified",
+                    ldapdb.models.fields.DateTimeField(db_column="modifyTimestamp"),
+                ),
+                ("dn", ldapdb.models.fields.CharField(max_length=200)),
+                (
+                    "uid",
+                    ldapdb.models.fields.IntegerField(
+                        db_column="uidNumber", unique=True
+                    ),
+                ),
+                ("group", ldapdb.models.fields.IntegerField(db_column="gidNumber")),
+                (
+                    "gecos",
+                    ldapdb.models.fields.CharField(
+                        db_column="gecos", default="Borghive Repo User", max_length=200
+                    ),
+                ),
+                (
+                    "home",
+                    ldapdb.models.fields.CharField(
+                        db_column="homeDirectory", default="/repos", max_length=200
+                    ),
+                ),
+                (
+                    "shell",
+                    ldapdb.models.fields.CharField(
+                        db_column="loginShell", default="/bin/bash", max_length=200
+                    ),
+                ),
+                (
+                    "username",
+                    ldapdb.models.fields.CharField(
+                        db_column="uid",
+                        max_length=200,
+                        primary_key=True,
+                        serialize=False,
+                    ),
+                ),
+                (
+                    "sn",
+                    ldapdb.models.fields.CharField(
+                        db_column="sn", default="", max_length=200
+                    ),
+                ),
+                (
+                    "cn",
+                    ldapdb.models.fields.CharField(
+                        db_column="cn", default="", max_length=200
+                    ),
+                ),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
             },
         ),
         migrations.CreateModel(
-            name='RepositoryUser',
+            name="RepositoryUser",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('name', models.CharField(max_length=8, unique=True)),
-                ('uid', models.IntegerField(unique=True)),
-                ('group', models.IntegerField()),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("name", models.CharField(max_length=8, unique=True)),
+                ("uid", models.IntegerField(unique=True)),
+                ("group", models.IntegerField()),
             ],
             options={
-                'abstract': False,
-            },
-            bases=(rules.contrib.models.RulesModelMixin, models.Model),
-        ),
-        migrations.CreateModel(
-            name='EmailNotification',
-            fields=[
-                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='borghive.Notification')),
-                ('email', models.EmailField(max_length=254)),
-            ],
-            options={
-                'abstract': False,
-                'base_manager_name': 'objects',
-            },
-            bases=('borghive.notification',),
-        ),
-        migrations.CreateModel(
-            name='PushoverNotification',
-            fields=[
-                ('notification_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='borghive.Notification')),
-                ('name', models.CharField(max_length=256)),
-                ('token', models.CharField(max_length=256)),
-                ('user', models.CharField(max_length=256)),
-            ],
-            options={
-                'abstract': False,
-                'base_manager_name': 'objects',
-            },
-            bases=('borghive.notification',),
-        ),
-        migrations.CreateModel(
-            name='SSHPublicKey',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=256)),
-                ('public_key', models.TextField(max_length=2048, validators=[django.core.validators.RegexValidator(message='SSH Public Key should match format: ssh-xxx AAAA... comment', regex='^((ssh|ecdsa)-[a-zA-Z0-9-]+) (AAAA[0-9A-Za-z+/=]+)( [\\w\\-@]+)?$'), borghive.lib.validators.ssh_public_key_validator])),
-                ('type', models.CharField(max_length=50)),
-                ('bits', models.IntegerField()),
-                ('fingerprint', models.CharField(max_length=256)),
-                ('comment', models.CharField(max_length=256, null=True)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('group', models.ManyToManyField(blank=True, to='auth.Group')),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'abstract': False,
-            },
-            bases=(rules.contrib.models.RulesModelMixin, models.Model),
-        ),
-        migrations.CreateModel(
-            name='RepositoryStatistic',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('repo_size', models.IntegerField()),
-                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='borghive.Repository')),
-            ],
-            options={
-                'abstract': False,
+                "abstract": False,
             },
             bases=(rules.contrib.models.RulesModelMixin, models.Model),
         ),
         migrations.CreateModel(
-            name='RepositoryEvent',
+            name="EmailNotification",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('event_type', models.CharField(choices=[('watcher', 'watcher'), ('alert', 'alert'), ('notification', 'notification')], max_length=20)),
-                ('message', models.TextField(max_length=200)),
-                ('repo', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='borghive.Repository')),
+                (
+                    "notification_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="borghive.Notification",
+                    ),
+                ),
+                ("email", models.EmailField(max_length=254)),
             ],
             options={
-                'abstract': False,
+                "abstract": False,
+                "base_manager_name": "objects",
+            },
+            bases=("borghive.notification",),
+        ),
+        migrations.CreateModel(
+            name="PushoverNotification",
+            fields=[
+                (
+                    "notification_ptr",
+                    models.OneToOneField(
+                        auto_created=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        parent_link=True,
+                        primary_key=True,
+                        serialize=False,
+                        to="borghive.Notification",
+                    ),
+                ),
+                ("name", models.CharField(max_length=256)),
+                ("token", models.CharField(max_length=256)),
+                ("user", models.CharField(max_length=256)),
+            ],
+            options={
+                "abstract": False,
+                "base_manager_name": "objects",
+            },
+            bases=("borghive.notification",),
+        ),
+        migrations.CreateModel(
+            name="SSHPublicKey",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=256)),
+                (
+                    "public_key",
+                    models.TextField(
+                        max_length=2048,
+                        validators=[
+                            django.core.validators.RegexValidator(
+                                message="SSH Public Key should match format: ssh-xxx AAAA... comment",
+                                regex="^((ssh|ecdsa)-[a-zA-Z0-9-]+) (AAAA[0-9A-Za-z+/=]+)( [\\w\\-@]+)?$",
+                            ),
+                            borghive.lib.validators.ssh_public_key_validator,
+                        ],
+                    ),
+                ),
+                ("type", models.CharField(max_length=50)),
+                ("bits", models.IntegerField()),
+                ("fingerprint", models.CharField(max_length=256)),
+                ("comment", models.CharField(max_length=256, null=True)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("group", models.ManyToManyField(blank=True, to="auth.Group")),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
+            },
+            bases=(rules.contrib.models.RulesModelMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name="RepositoryStatistic",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("repo_size", models.IntegerField()),
+                (
+                    "repo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="borghive.Repository",
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
+            },
+            bases=(rules.contrib.models.RulesModelMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name="RepositoryEvent",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "event_type",
+                    models.CharField(
+                        choices=[
+                            ("watcher", "watcher"),
+                            ("alert", "alert"),
+                            ("notification", "notification"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("message", models.TextField(max_length=200)),
+                (
+                    "repo",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="borghive.Repository",
+                    ),
+                ),
+            ],
+            options={
+                "abstract": False,
             },
             bases=(rules.contrib.models.RulesModelMixin, models.Model),
         ),
         migrations.AddField(
-            model_name='repository',
-            name='repo_user',
-            field=models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='borghive.RepositoryUser'),
+            model_name="repository",
+            name="repo_user",
+            field=models.OneToOneField(
+                on_delete=django.db.models.deletion.CASCADE,
+                to="borghive.RepositoryUser",
+            ),
         ),
         migrations.AddField(
-            model_name='repository',
-            name='ssh_keys',
-            field=models.ManyToManyField(to='borghive.SSHPublicKey'),
+            model_name="repository",
+            name="ssh_keys",
+            field=models.ManyToManyField(to="borghive.SSHPublicKey"),
         ),
         migrations.CreateModel(
-            name='AlertPreference',
+            name="AlertPreference",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('alert_interval', models.PositiveIntegerField(default=12, validators=[django.core.validators.MaxValueValidator(48)])),
-                ('alert_expiration', models.PositiveIntegerField(default=5, validators=[django.core.validators.MaxValueValidator(30)])),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "alert_interval",
+                    models.PositiveIntegerField(
+                        default=12,
+                        validators=[django.core.validators.MaxValueValidator(48)],
+                    ),
+                ),
+                (
+                    "alert_expiration",
+                    models.PositiveIntegerField(
+                        default=5,
+                        validators=[django.core.validators.MaxValueValidator(30)],
+                    ),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.AlterUniqueTogether(
-            name='repository',
-            unique_together={('name', 'repo_user')},
+            name="repository",
+            unique_together={("name", "repo_user")},
         ),
     ]
