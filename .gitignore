@@ -121,3 +121,6 @@ helm/charts
 
 .devcontainer/.data
 .DS_Store
+
+.github/
+!.github/workflows/
