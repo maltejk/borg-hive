@@ -34,6 +34,10 @@ DEBUG = env.bool("DEBUG", True)
 
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS", "localhost").split(" ")
 
+# Reverse proxy settings
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 
 # Application definition
 
