@@ -104,14 +104,7 @@ DATABASES = {
         "HOST": env("MYSQL_HOST", "db"),
         "PORT": env.int("MYSQL_PORT", 3306),
     },
-    "ldap": {
-        "ENGINE": "ldapdb.backends.ldap",
-        "NAME": env("LDAP_HOST", "ldap://ldap"),
-        "USER": env("LDAP_USER", "cn=admin,dc=borghive,dc=local"),
-        "PASSWORD": env("LDAP_PASSWORD", "borghive"),
-    },
 }
-DATABASE_ROUTERS = ["ldapdb.router.Router"]
 
 TEST_MODE = env("TEST_MODE", False)
 if TEST_MODE:
@@ -255,7 +248,7 @@ BORGHIVE = {
     "CONFIG_PATH": env("CONFIG_PATH", "/config"),
     "REPO_PATH": env("BORGHIVE_REPO_PATH", "/repos"),
     "SSH_PUBLIC_KEY_REGEX": r"^((ssh|ecdsa)-[a-zA-Z0-9-]+) (AAAA[0-9A-Za-z+/=]+)",
-    "LDAP_USER_BASEDN": env("BORGHIVE_LDAP_USER_BASEDN", "dc=borghive,dc=local"),
+    "EXTRAUSERS_PATH": env("BORGHIVE_EXTRAUSERS_PATH", "/var/lib/extrausers"),
 }
 
 #

@@ -3,7 +3,6 @@ django-celery-beat==2.8.1
 django-crispy-forms==2.4
 crispy-bootstrap4==2025.6
 django-extensions==4.1
-mprov-django-ldapdb==1.5.4
 django-login-required-middleware==0.9.0
 django-polymorphic==4.1.0
 django==4.2.4

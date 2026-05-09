@@ -27,6 +27,7 @@ services:
     volumes:
       - borg-config:/config
       - borg-repos:/repos
+      - extrausers-data:/var/lib/extrausers
       - static:/staticfiles
     ports:
       - "8000:8000"
@@ -50,6 +51,7 @@ services:
     volumes:
       - borg-config:/config
       - borg-repos:/repos:ro
+      - extrausers-data:/var/lib/extrausers
     depends_on:
       - db
 
@@ -82,29 +84,12 @@ services:
       - MYSQL_DATABASE=borghive
       - MYSQL_USER=borghive
       - MYSQL_PASSWORD=borghive
-      - BORG_LDAP_HOST=ldap://ldap
-      - BORG_LDAP_BASE_DN=dc=borghive,dc=local
-      - BORG_LDAP_READONLY_DN=cn=readonly,dc=borghive,dc=local
-      - BORG_LDAP_READONLY_USER_PASSWORD=readonly
     volumes:
       - borg-repos:/repos
       - borg-config:/config
+      - extrausers-data:/var/lib/extrausers:ro
     ports:
       - "22:22"
-
-  ldap:
-    image: osixia/openldap-backup:latest
-    environment:
-      - LDAP_ORGANISATION=borghive
-      - LDAP_DOMAIN=borghive.local
-      - LDAP_ADMIN_PASSWORD=borghive
-      - LDAP_READONLY_USER=true
-      - LDAP_BACKUP_CONFIG_CRON_EXP="*/5 * * * *"
-      - LDAP_BACKUP_DATA_CRON_EXP="*/5 * * * *"
-    volumes:
-      - ldap-data:/var/lib/ldap
-      - ldap-config:/etc/ldap/slapd.d
-      - ldap-backup:/data/backup
 
   redis:
     image: redis:6.2.19-bookworm
@@ -113,7 +98,5 @@ volumes:
   mariadb-data:
   borg-repos:
   borg-config:
-  ldap-backup:
-  ldap-data:
-  ldap-config:
+  extrausers-data:
   static:

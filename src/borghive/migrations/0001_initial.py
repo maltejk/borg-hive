@@ -5,7 +5,6 @@ from django.conf import settings
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import ldapdb.models.fields
 import rules.contrib.models
 
 
@@ -98,65 +97,6 @@ class Migration(migrations.Migration):
                 "verbose_name_plural": "Repositories",
             },
             bases=(rules.contrib.models.RulesModelMixin, models.Model),
-        ),
-        migrations.CreateModel(
-            name="RepositoryLdapUser",
-            fields=[
-                (
-                    "last_modified",
-                    ldapdb.models.fields.DateTimeField(db_column="modifyTimestamp"),
-                ),
-                ("dn", ldapdb.models.fields.CharField(max_length=200)),
-                (
-                    "uid",
-                    ldapdb.models.fields.IntegerField(
-                        db_column="uidNumber", unique=True
-                    ),
-                ),
-                ("group", ldapdb.models.fields.IntegerField(db_column="gidNumber")),
-                (
-                    "gecos",
-                    ldapdb.models.fields.CharField(
-                        db_column="gecos", default="Borghive Repo User", max_length=200
-                    ),
-                ),
-                (
-                    "home",
-                    ldapdb.models.fields.CharField(
-                        db_column="homeDirectory", default="/repos", max_length=200
-                    ),
-                ),
-                (
-                    "shell",
-                    ldapdb.models.fields.CharField(
-                        db_column="loginShell", default="/bin/bash", max_length=200
-                    ),
-                ),
-                (
-                    "username",
-                    ldapdb.models.fields.CharField(
-                        db_column="uid",
-                        max_length=200,
-                        primary_key=True,
-                        serialize=False,
-                    ),
-                ),
-                (
-                    "sn",
-                    ldapdb.models.fields.CharField(
-                        db_column="sn", default="", max_length=200
-                    ),
-                ),
-                (
-                    "cn",
-                    ldapdb.models.fields.CharField(
-                        db_column="cn", default="", max_length=200
-                    ),
-                ),
-            ],
-            options={
-                "abstract": False,
-            },
         ),
         migrations.CreateModel(
             name="RepositoryUser",

@@ -8,11 +8,11 @@ ENV PYTHONDONTWRITEBYTE=1
 ENV PYTHONUNBUFFERED=1
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install SSH, Mariadb and LDAP Deps
+# Install SSH, Mariadb deps
 SHELL ["/bin/bash", "-c"]
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y build-essential libpam-ldapd libmariadb-dev libsasl2-dev libldap2-dev \
+    apt-get install -y build-essential libmariadb-dev \
                        libssl-dev pkg-config openssh-server rsync; \
     rm -rf /var/lib/apt/lists/*; rm -rf /var/cache/apt/archives/*.deb
 
@@ -28,7 +28,7 @@ FROM python:3.12-slim-trixie AS final
 
 RUN set -eux; \
     apt-get update; \
-    apt-get install -y borgbackup libldap2 libmariadb3 libpam-ldapd nslcd openssh-server rsync; \
+    apt-get install -y borgbackup libnss-extrausers libmariadb3 openssh-server rsync; \
     rm -rf /var/lib/apt/lists/*; rm -rf /var/cache/apt/archives/*.deb
 
 COPY --from=build /app /app
@@ -39,7 +39,9 @@ RUN set -eux; \
     groupadd -g 1000 borg; \
     useradd -rm -u 1000 -g 1000 borg; \
     mkdir /repos; \
-    chown -R borg:borg /repos
+    chown -R borg:borg /repos; \
+    mkdir -p /var/lib/extrausers; \
+    touch /var/lib/extrausers/passwd /var/lib/extrausers/group
 
 ADD borg/sshd_config /etc/ssh/sshd_config
 ADD borg/pam-sshd.conf /etc/pam.d/sshd
