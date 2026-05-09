@@ -25,7 +25,10 @@ def _atomic_write(path, content):
 
 
 def sync_extrausers(users):
-    """Regenerate /var/lib/extrausers/passwd and group from a queryset of RepositoryUser."""
+    """Regenerate /var/lib/extrausers/passwd from a queryset of RepositoryUser."""
+    if settings.TEST_MODE:
+        return
+
     path = settings.BORGHIVE.get("EXTRAUSERS_PATH", "/var/lib/extrausers")
     repo_path = settings.BORGHIVE["REPO_PATH"]
 
