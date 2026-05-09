@@ -91,6 +91,7 @@ class RepositoryUser(BaseModel):
         )
 
     def sync_to_extrausers(self):
+        """write all repo users to extrausers passwd file"""
         if settings.TEST_MODE:
             return
         sync_extrausers(RepositoryUser.objects.all())
