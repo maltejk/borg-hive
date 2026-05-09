@@ -35,7 +35,9 @@ def sync_extrausers(users):
     passwd_lines = []
     for u in users:
         home = os.path.join(repo_path, u.name)
-        passwd_lines.append(f"{u.name}:x:{u.uid}:{u.group}:Borghive Repo User:{home}:/bin/bash")
+        passwd_lines.append(
+            f"{u.name}:x:{u.uid}:{u.group}:Borghive Repo User:{home}:/bin/bash"
+        )
 
     _atomic_write(
         os.path.join(path, "passwd"),
