@@ -13,7 +13,12 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 import borghive.exceptions
-from borghive.models import Repository, RepositoryEvent, RepositoryStatistic
+from borghive.models import (
+    Repository,
+    RepositoryEvent,
+    RepositoryStatistic,
+    RepositoryUser,
+)
 from borghive.forms import RepositoryForm
 
 
@@ -125,3 +130,20 @@ class RepositoryEventTest(TestCase):
         print(RepositoryStatistic.objects.all())
 
         self.assertEqual(RepositoryStatistic.objects.filter(repo=repo).count(), 1)
+
+
+class RepositoryUserSignalTest(TestCase):
+    """test signals fired on RepositoryUser save/delete"""
+
+    fixtures = [
+        "testing/users.yaml",
+        "testing/sshpubkeys.yaml",
+        "testing/repositoryusers.yaml",
+        "testing/repositories.yaml",
+    ]
+
+    def test_repository_user_delete_fires_sync(self):
+        user = RepositoryUser.objects.first()
+        count_before = RepositoryUser.objects.count()
+        user.delete()
+        self.assertEqual(RepositoryUser.objects.count(), count_before - 1)
