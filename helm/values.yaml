@@ -107,14 +107,3 @@ redis:
   enabled: true
   fullnameOverride: redis
   usePassword: false
-
-openldap:
-  env:
-    LDAP_ORGANISATION: "borghive"
-    LDAP_DOMAIN: "borghive.local"
-    LDAP_BACKEND: "hdb"
-    LDAP_TLS: "true"
-    LDAP_TLS_ENFORCE: "false"
-    LDAP_READONLY_USER: "true"
-  persistence:
-    enabled: True

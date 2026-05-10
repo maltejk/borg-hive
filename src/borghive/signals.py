@@ -10,8 +10,8 @@ from borghive.models import (
     Repository,
     RepositoryEvent,
     RepositoryUser,
-    RepositoryLdapUser,
 )
+from borghive.lib.extrausers import sync_extrausers
 
 LOGGER = logging.getLogger(__name__)
 
@@ -27,21 +27,18 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=RepositoryUser)
 def repository_user_created(sender, instance, created, **kwargs):
-    """sync repositoryuser to ldap sshd when a user is created"""
+    """sync extrausers files when a repository user is created or updated"""
     LOGGER.debug(
         "repository_user_created: %s, %s, %s, %s", sender, instance, created, kwargs
     )
-    instance.sync_to_ldap()
+    instance.sync_to_extrausers()
 
 
 @receiver(post_delete, sender=RepositoryUser)
 def repository_user_deleted(sender, instance, **kwargs):
-    """delete ldap user for sshd when a repo user is deleted"""
+    """sync extrausers files after a repository user is deleted"""
     LOGGER.debug("repository_user_deleted: %s, %s, %s", sender, instance, kwargs)
-    try:
-        RepositoryLdapUser.objects.get(username=instance.name).delete()
-    except RepositoryLdapUser.DoesNotExist:
-        pass
+    sync_extrausers(RepositoryUser.objects.all())
 
 
 @receiver(post_delete, sender=Repository)

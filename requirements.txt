@@ -50,7 +50,6 @@ django==4.2.4
     #   django-polymorphic
     #   django-timezone-field
     #   djangorestframework
-    #   mprov-django-ldapdb
 django-celery-beat==2.8.1
     # via -r requirements.in
 django-crispy-forms==2.4
@@ -81,8 +80,6 @@ kombu==5.5.4
     # via celery
 marshmallow==4.0.0
     # via environs
-mprov-django-ldapdb==1.5.4
-    # via -r requirements.in
 mysqlclient==2.2.7
     # via -r requirements.in
 packaging==25.0
@@ -91,12 +88,6 @@ packaging==25.0
     #   kombu
 prompt-toolkit==3.0.51
     # via click-repl
-pyasn1==0.6.1
-    # via
-    #   pyasn1-modules
-    #   python-ldap
-pyasn1-modules==0.4.2
-    # via python-ldap
 pycparser==2.22
     # via cffi
 pyproject-hooks==1.2.0
@@ -107,8 +98,6 @@ python-dateutil==2.9.0.post0
     # via celery
 python-dotenv==1.1.1
     # via environs
-python-ldap==3.4.4
-    # via mprov-django-ldapdb
 pyyaml==6.0.2
     # via -r requirements.in
 redis==6.4.0

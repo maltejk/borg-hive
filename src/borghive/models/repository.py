@@ -15,9 +15,9 @@ from django.utils.timezone import make_aware
 
 import borghive.exceptions
 import borghive.lib.rules
+from borghive.lib.extrausers import sync_extrausers
 from borghive.lib.user import generate_userid
 from borghive.models.base import BaseModel
-from borghive.models.ldap import RepositoryLdapUser
 from borghive.managers import OwnerOrGroupManager
 
 from .key import SSHPublicKey
@@ -61,7 +61,7 @@ class RepositoryUser(BaseModel):
             self.uid = self.generate_uid()
 
         super().save(*args, **kwargs)
-        self.sync_to_ldap()
+        self.sync_to_extrausers()
 
     def __str__(self):
         """representation"""
@@ -90,17 +90,11 @@ class RepositoryUser(BaseModel):
             f"{uid} no uid found betweeen MIN_UID {self.MIN_UID} and MAX_UID {self.MAX_UID}"
         )
 
-    def sync_to_ldap(self):
-        """django prevents cross db relations - sync to ldap backend"""
+    def sync_to_extrausers(self):
+        """write all repo users to extrausers passwd file"""
         if settings.TEST_MODE:
             return
-        try:
-            repo_ldap_user = RepositoryLdapUser.objects.get(username=self.name)
-        except RepositoryLdapUser.DoesNotExist:
-            repo_ldap_user = RepositoryLdapUser(
-                uid=self.uid, group=self.group, username=self.name
-            )
-            repo_ldap_user.save()
+        sync_extrausers(RepositoryUser.objects.all())
 
 
 class RepositoryMode:

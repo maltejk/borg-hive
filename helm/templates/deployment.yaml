@@ -70,13 +70,6 @@ spec:
                 secretKeyRef:
                   key: SECRET_KEY
                   name: borg-hive-app
-            - name: "LDAP_HOST"
-              value: "ldap://borg-hive-openldap"
-            - name: "LDAP_PASSWORD"
-              valueFrom:
-                secretKeyRef:
-                  key: LDAP_ADMIN_PASSWORD
-                  name: borg-hive-openldap
             - name: "CELERY_BROKER_URL"
               value: "redis://redis-master:6379/0"
             - name: "CELERY_RESULT_BACKEND"
@@ -100,6 +93,8 @@ spec:
               name: {{ include "borg-hive.fullname" . }}-config
             - mountPath: "/repos"
               name: {{ include "borg-hive.fullname" . }}-repos
+            - mountPath: "/var/lib/extrausers"
+              name: {{ include "borg-hive.fullname" . }}-extrausers
           ports:
             - name: http
               containerPort: 8000
@@ -131,6 +126,9 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "borg-hive.fullname" . }}-repos
           {{- end}}
+        - name: {{ include "borg-hive.fullname" . }}-extrausers
+          persistentVolumeClaim:
+            claimName: {{ include "borg-hive.fullname" . }}-extrausers
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -198,19 +196,14 @@ spec:
               value: "{{ .Values.app.debug }}"
             - name: "APP_LOG_LEVEL"
               value: "{{ .Values.app.logLevel }}"
-            - name: "BORG_LDAP_HOST"
-              value: "ldap://borg-hive-openldap"
-            - name: "BORG_LDAP_BASE_DN"
-              value: "dc=borghive,dc=local"
-            - name: "BORG_LDAP_READONLY_DN"
-              value: "cn=readonly,dc=borghive,dc=local"
-            - name: "BORG_LDAP_READONLY_USER_PASSWORD"
-              value: "readonly"
           volumeMounts:
             - mountPath: "/config"
               name: {{ include "borg-hive.fullname" . }}-config
             - mountPath: "/repos"
               name: {{ include "borg-hive.fullname" . }}-repos
+            - mountPath: "/var/lib/extrausers"
+              name: {{ include "borg-hive.fullname" . }}-extrausers
+              readOnly: true
           ports:
             - name: ssh
               containerPort: 22
@@ -240,6 +233,9 @@ spec:
           persistentVolumeClaim:
             claimName: {{ include "borg-hive.fullname" . }}-repos
           {{- end}}
+        - name: {{ include "borg-hive.fullname" . }}-extrausers
+          persistentVolumeClaim:
+            claimName: {{ include "borg-hive.fullname" . }}-extrausers
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

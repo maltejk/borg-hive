@@ -15,6 +15,7 @@ services:
     volumes:
       - borg-config:/config
       - borg-repos:/repos
+      - extrausers-data:/var/lib/extrausers
     ports:
       - "8000:8000"
     depends_on:
@@ -28,6 +29,7 @@ services:
     volumes:
       - borg-config:/config
       - borg-repos:/repos:ro
+      - extrausers-data:/var/lib/extrausers
     depends_on:
       - db
 
@@ -51,29 +53,9 @@ services:
     volumes:
       - borg-repos:/repos
       - borg-config:/config
+      - extrausers-data:/var/lib/extrausers:ro
     ports:
       - "${BORG_SSH_PORT}:22"
-
-  # nginx:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile.nginx
-  #   volumes:
-  #     - static:/staticfiles
-  #   ports:
-  #     - 80:80
-  #   depends_on:
-  #     - app
-
-  ldap:
-    # image: osixia/openldap:latest
-    image: osixia/openldap-backup:1.4.0-amd64
-    env_file:
-      - .env
-    volumes:
-      - ldap-data:/var/lib/ldap
-      - ldap-config:/etc/ldap/slapd.d
-      - ldap-backup:/data/backup
 
   redis:
     # image: redis:latest
@@ -81,11 +63,9 @@ services:
 
 volumes:
   mariadb-data:
-  ldap-data:
-  ldap-config:
-  ldap-backup:
   borg-config:
   borg-repos:
+  extrausers-data:
 
 #
 # EXAMPLES for other repository locations (borg-repos):

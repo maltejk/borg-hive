@@ -3,7 +3,6 @@
 import django.core.validators
 from django.db import migrations, models
 import django.db.models.deletion
-import ldapdb.models.fields
 import borghive.lib.validators
 
 
@@ -52,13 +51,6 @@ class Migration(migrations.Migration):
             name="id",
             field=models.BigAutoField(
                 auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
-            ),
-        ),
-        migrations.AlterField(
-            model_name="repositoryldapuser",
-            name="dn",
-            field=ldapdb.models.fields.CharField(
-                max_length=200, primary_key=True, serialize=False
             ),
         ),
         migrations.AlterField(

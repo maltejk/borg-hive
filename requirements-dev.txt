@@ -6,3 +6,4 @@ pylint-plugin-utils
 coverage
 pip-tools
 black
+setuptools<81
