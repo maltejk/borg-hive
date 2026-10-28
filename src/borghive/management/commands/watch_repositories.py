@@ -65,7 +65,7 @@ class Command(BaseCommand):
     def _process_event(self, event, repo_path):
         """Process a single inotify event."""
         try:
-            (_, type_names, path, filename) = event
+            _, type_names, path, filename = event
 
             LOGGER.debug(
                 "PATH=[%s] FILENAME=[%s] EVENT_TYPES=%s",

@@ -14,7 +14,6 @@ from borghive.lib.keys import get_ssh_host_key_infos
 from borghive.models import Repository, RepositoryUser
 import borghive.exceptions
 
-
 LOGGER = logging.getLogger(__name__)
 
 
