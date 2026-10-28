@@ -1,6 +1,7 @@
 import logging
 
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
@@ -48,7 +49,31 @@ def repository_user_deleted(sender, instance, **kwargs):
 def repository_deleted(sender, instance, **kwargs):
     """delete repository data on filesystem when repository is deleted"""
     LOGGER.debug("repository_deleted: %s, %s, %s", sender, instance, kwargs)
-    borghive.tasks.repository_delete.delay(instance.get_repo_path())
+
+    try:
+        repo_path = instance.get_repo_path()
+    except Exception:  # pylint: disable=broad-except
+        LOGGER.error(
+            "repository_deleted: failed to resolve repo path for %s, "
+            "filesystem cleanup skipped",
+            instance,
+            exc_info=True,
+        )
+        return
+
+    def _schedule_repository_delete():
+        try:
+            borghive.tasks.repository_delete.delay(repo_path)
+        except Exception:  # pylint: disable=broad-except
+            LOGGER.error(
+                "repository_deleted: failed to queue filesystem cleanup "
+                "for %s at %s",
+                instance,
+                repo_path,
+                exc_info=True,
+            )
+
+    transaction.on_commit(_schedule_repository_delete)
 
 
 @receiver(post_save, sender=RepositoryEvent)

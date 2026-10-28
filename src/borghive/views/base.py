@@ -25,7 +25,10 @@ class BaseView(AutoPermissionRequiredMixin, OwnerFilterMixin):
     def get_form_kwargs(self):
         """add request.user to form kwargs"""
         kwargs = super().get_form_kwargs()
-        kwargs.update({"user": self.request.user})  # pylint: disable=no-member
+        if not isinstance(self, DeleteView):
+            # DeleteView's default form is a plain Form, not a ModelForm,
+            # and doesn't accept the extra "user" kwarg
+            kwargs.update({"user": self.request.user})  # pylint: disable=no-member
         return kwargs
 
     class Meta:

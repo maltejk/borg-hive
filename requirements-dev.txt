@@ -1,5 +1,6 @@
 pylint
 astroid
+setuptools<81
 pylama
 pylint-django
 pylint-plugin-utils

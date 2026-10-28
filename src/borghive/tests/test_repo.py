@@ -3,7 +3,7 @@ import os
 import tempfile
 
 import unittest
-from unittest import skip
+from unittest import mock, skip
 
 from django.conf import settings
 from django.test import Client
@@ -13,6 +13,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 
 import borghive.exceptions
+import borghive.tasks
 from borghive.models import Repository, RepositoryEvent, RepositoryStatistic
 from borghive.forms import RepositoryForm
 
@@ -69,8 +70,41 @@ class RepositoryTest(TestCase):
             path = repo.get_repo_path()
             os.makedirs(path)
             self.assertTrue(os.path.isdir(path))
-            repo.delete()
+            with self.captureOnCommitCallbacks(execute=True):
+                repo.delete()
             self.assertFalse(os.path.isdir(path))
+
+    def test_repo_delete_broker_failure_does_not_raise(self):
+        """a broker outage during post_delete cleanup must not stop the
+        Repository row itself from being deleted"""
+        repo = Repository.objects.first()
+        repo_id = repo.id
+        with mock.patch.object(
+            borghive.tasks.repository_delete,
+            "delay",
+            side_effect=ConnectionError("broker down"),
+        ):
+            with self.captureOnCommitCallbacks(execute=True):
+                repo.delete()
+        self.assertFalse(Repository.objects.filter(id=repo_id).exists())
+
+    def test_repo_delete_view_broker_failure_returns_no_500(self):
+        """RepositoryDeleteView must not surface a 500 when the celery
+        broker is unreachable during the post_delete signal"""
+        self.client = Client()
+        self.client.force_login(User.objects.get_or_create(username="admin")[0])
+        repo = Repository.objects.first()
+        with mock.patch.object(
+            borghive.tasks.repository_delete,
+            "delay",
+            side_effect=ConnectionError("broker down"),
+        ):
+            with self.captureOnCommitCallbacks(execute=True):
+                response = self.client.post(
+                    reverse("repository-delete", args=[repo.id])
+                )
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Repository.objects.filter(id=repo.id).exists())
 
     def test_repo_size(self):
         repo = Repository.objects.first()
