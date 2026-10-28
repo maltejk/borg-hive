@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.views.generic.edit import DeleteView
 
 
 class OwnerFilterMixin:
@@ -17,5 +18,8 @@ class OwnerFilterMixin:
     def get_form_kwargs(self):
         """pass owner to forms"""
         kwargs = super().get_form_kwargs()
-        kwargs.update({"owner": self.request.user})
+        if not isinstance(self, DeleteView):
+            # DeleteView's default form is a plain Form, not a ModelForm,
+            # and doesn't accept the extra "owner" kwarg
+            kwargs.update({"owner": self.request.user})
         return kwargs
